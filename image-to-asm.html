@@ -58,6 +58,12 @@
             flex-shrink: 0;
         }
 
+        .palette-switcher {
+            font-weight: bold;
+            border-bottom: 1px dashed #000;
+            cursor: pointer;
+        }
+
         .form-line {
             display: flex;
             justify-content: space-between;
@@ -83,15 +89,21 @@
 <body>
 <h1>Конвертирование картинки для БК (png, gif) в ассемблерный код</h1>
 <div id="app" v-cloak>
-    <p><input type="file" @change="fileChanged"></p>
+    <p><input type="file" @change="fileChanged" accept="image/jpeg,image/png,image/gif"></p>
     <p v-show="showImage"><img id="image" ref="image"></p>
     <p v-if="error" style="color:red">{{ error }}</p>
     <div v-show="showImage && !error">
         <p v-if="mainPalette">
             Автоматически определена палитра
-            {{ mainPalette }}<span v-if="alsoPalettes.length">,
-            также {{ alsoPalettes.length > 1 ? 'подходят палитры' : 'подходит палитра' }}
-            {{ alsoPalettes.join(', ') }}</span>
+            <span v-if="!alsoPalettes.length">
+                {{ mainPalette }}
+            </span>
+            <span v-else>
+                <span class="palette-switcher" @click="setPalette(mainPalette)">{{ mainPalette }}</span>,
+                также {{ alsoPalettes.length > 1 ? 'подходят палитры' : 'подходит палитра' }}
+                <span v-for="(pal, i) in alsoPalettes">{{ i ? ',' : '' }}
+                    <span class="palette-switcher" @click="setPalette(pal)">{{ pal }}</span></span>
+            </span>
         </p>
         <p>
             Палитра:
@@ -242,6 +254,7 @@
         } catch (e) {}
       }
     },
+
     computed: {
       mainPalette: function() {
         return Array.isArray(this.matchedPalettes) && this.matchedPalettes.length ?
@@ -290,6 +303,7 @@
         };
       }
     },
+
     methods: {
       fileChanged: function(event) {
         this.error = '';
@@ -315,9 +329,9 @@
               _this.error = 'Не удалось определить палитру, это не подходящий для БК рисунок';
             } else {
               _this.converter = result.converter;
-              _this.palette = _this.matchedPalettes[0];
               _this.imageSize = _this.converter.getSize();
               _this.crop = _this.cropCorrect;
+              _this.palette = _this.matchedPalettes[0];
               _this.convertFile();
             }
           }
@@ -325,6 +339,7 @@
       },
 
       convertFile: function() {
+        if (!this.converter) return;
         var paletteId = +this.palette;
         if (this.useCrop) {
           this.crop = this.cropCorrect;
@@ -349,6 +364,10 @@
         }
       },
 
+      setPalette: function(palette) {
+        this.palette = palette;
+      },
+
       resetCrop: function() {
         this.crop = {
           x: 0,
@@ -357,11 +376,27 @@
           height: this.maxHeight
         };
         localStorage.removeItem(STORAGE_KEY_CROP);
+        this.convertFile();
       },
 
       copyResult: function() {
         this.$refs.result.select();
         document.execCommand('copy');
+      }
+    },
+
+    watch: {
+      palette: function() {
+        this.convertFile();
+      },
+      outputType: function() {
+        this.convertFile();
+      },
+      radix: function() {
+        this.convertFile();
+      },
+      insertSize: function() {
+        this.convertFile();
       }
     }
   });
@@ -501,10 +536,12 @@
       }
       var colorToIndex = colorToIndexByPallette[paletteId];
       var bytes = _getBytesFromPixels(colorToIndex, area);
-      var text = '\t; ' + fileName +
-          (crop ? ' [' + crop.x + ',' + crop.y + '/' +
-              crop.width + ',' + crop.height + ']' : '') + '\r\n' +
-          _convertBytes(bytes, outputType, radix, insertSize, area);
+      var text = _convertBytes(bytes, outputType, radix, insertSize, area);
+      if (text) {
+        text = '\t; ' + fileName +
+            (crop ? ' [' + crop.x + ',' + crop.y + '/' +
+                crop.width + ',' + crop.height + ']' : '') + '\r\n' + text;
+      }
       return text;
     }
 
@@ -628,6 +665,7 @@
     function _convertBytes(bytes, outputType, radix, insertSize, area) {
       var width = area.xEnd - area.xBegin;
       var height = area.yEnd - area.yBegin;
+      if (!width || !height) return '';
       var bytesPerLine = Math.ceil(width / 4);
       var textLines = [];
       if (insertSize) {
