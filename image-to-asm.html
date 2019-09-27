@@ -83,6 +83,26 @@
             width: 50px;
             text-align: right;
         }
+
+        #palettesTable {
+            border: 1px solid #000;
+            border-collapse: collapse;
+        }
+
+        #palettesTable th {
+            background-color: #BBB;
+            font-weight: bold;
+        }
+
+        #palettesTable td, #palettesTable th {
+            padding: 3px 10px;
+            border: 1px solid #000;
+        }
+
+        .td-black {
+            background-color: #000;
+            color: #fff;
+        }
     </style>
 
 </head>
@@ -90,6 +110,32 @@
 <h1>Конвертирование картинки для БК (png, gif) в ассемблерный код</h1>
 <div id="app" v-cloak>
     <p><input type="file" @change="fileChanged" accept="image/jpeg,image/png,image/gif"></p>
+    <p>
+        <span v-if="!showPalettes" @click="showPalettes=true" class="palette-switcher">Показать палитры БК-11М</span>
+    </p>
+    <div v-if="showPalettes">
+        <p><span @click="showPalettes=false" class="palette-switcher">Скрыть палитры</span></p>
+        <table id="palettesTable">
+            <thead>
+            <tr>
+                <th>Палитра №</th>
+                <th>0</th>
+                <th>1</th>
+                <th>2</th>
+                <th>3</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="(colors, i) in palettesList">
+                <td>{{ (i < 10 ? '0' : '') + i }}</td>
+                <td class="td-black">#000000</td>
+                <td v-for="color in colors" v-bind:style="{backgroundColor:'#'+color, color: getTdTextColor(color)}">
+                    #{{ color }}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
     <p v-show="showImage"><img id="image" ref="image"></p>
     <p v-if="error" style="color:red">{{ error }}</p>
     <div v-show="showImage && !error">
@@ -203,11 +249,14 @@
     ['00FFFF', '00FF00', 'FFFFFF']
   ];
 
+  var DARK_COLORS = ['0000FF', 'FF0000', '900000', '9000FF', 'C00000', 'C000FF'];
+
   var COLOR_DELTA = Math.round(256 * 0.05); // Допуск 5% для цветового компонента
 
   var app = new Vue({
     el: '#app',
     data: {
+      showPalettes: false,
       palette: '00',
       outputType: OUTPUT_WORD,
       radix: '8',
@@ -264,6 +313,9 @@
         return Array.isArray(this.matchedPalettes) ?
             this.matchedPalettes.slice(1) : [];
       },
+      palettesList: function() {
+        return PALETTES;
+      },
       maxWidth: function() {
         return this.imageSize ? Math.ceil(this.imageSize.width / 4) : 0;
       },
@@ -305,6 +357,9 @@
     },
 
     methods: {
+      getTdTextColor: function(color) {
+        return DARK_COLORS.indexOf(color) > -1 ? '#FFF' : '#000';
+      },
       fileChanged: function(event) {
         this.error = '';
         this.showImage = false;
@@ -524,14 +579,14 @@
           yBegin: crop.y,
           yEnd: Math.min(crop.y + crop.height, height),
           xBegin: crop.x * 4,
-          xEnd: Math.min((crop.x + crop.width) * 4, width),
+          xEnd: Math.min((crop.x + crop.width) * 4, width)
         };
       } else {
         area = {
           yBegin: 0,
           yEnd: height,
           xBegin: 0,
-          xEnd: width,
+          xEnd: width
         };
       }
       var colorToIndex = colorToIndexByPallette[paletteId];
