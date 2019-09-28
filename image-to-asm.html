@@ -249,8 +249,6 @@
     ['00FFFF', '00FF00', 'FFFFFF']
   ];
 
-  var DARK_COLORS = ['0000FF', 'FF0000', '900000', '9000FF', 'C00000', 'C000FF'];
-
   var COLOR_DELTA = Math.round(256 * 0.05); // Допуск 5% для цветового компонента
 
   var app = new Vue({
@@ -358,7 +356,8 @@
 
     methods: {
       getTdTextColor: function(color) {
-        return DARK_COLORS.indexOf(color) > -1 ? '#FFF' : '#000';
+        // Если зеленый компонент цвета нулевой, то считаем это темным цветом и пишем по нему белым
+        return color.substr(2, 2) === '00' ? '#FFF' : '#000';
       },
       fileChanged: function(event) {
         this.error = '';
@@ -451,6 +450,9 @@
         this.convertFile();
       },
       insertSize: function() {
+        this.convertFile();
+      },
+      useCrop: function() {
         this.convertFile();
       }
     }
