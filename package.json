@@ -1,0 +1,24 @@
+{
+  "name": "bk-utils",
+  "version": "0.1.0",
+  "description": "Utils for BK soviet computers",
+  "scripts": {
+    "build": "webpack",
+    "watch": "webpack --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zakirov-net/bk-utils"
+  },
+  "homepage": "https://zakirov-net.github.io/bk-utils/",
+  "author": "Lenar Zakirov <lenar@zakirov.net> (https://zakirov.net/)",
+  "license": "ISC",
+  "devDependencies": {
+    "ts-loader": "^6.1.2",
+    "typescript": "^3.6.3",
+    "vue": "^2.6.10",
+    "vue-loader": "^15.7.1",
+    "webpack": "^4.41.0",
+    "webpack-cli": "^3.3.9"
+  }
+}
