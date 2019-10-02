@@ -38,20 +38,24 @@ new Vue({
      */
     created: function() {
         const cropData = storage.load(STORAGE_KEY_CROP);
-        Object.keys(this.crop).forEach(field => {
-            if (field in cropData) {
-                this.crop[field] = parseInt(cropData[field], 10) || 0;
-            }
-        });
+        if (cropData) {
+            Object.keys(this.crop).forEach(field => {
+                if (field in cropData) {
+                    this.crop[field] = parseInt(cropData[field], 10) || 0;
+                }
+            });
+        }
         const setsData = storage.load(STORAGE_KEY_SETS);
-        if (setsData.outputType && setsData.outputType in OUTPUT_TYPES) {
-            this.outputType = setsData.outputType;
-        }
-        if (setsData.radix && RADIX_LIST.indexOf(setsData.radix) > -1) {
-            this.radix = setsData.radix;
-        }
-        if ('insertSize' in setsData) {
-            this.insertSize = !!setsData.insertSize;
+        if (setsData) {
+            if (setsData.outputType && setsData.outputType in OUTPUT_TYPES) {
+                this.outputType = setsData.outputType;
+            }
+            if (setsData.radix && RADIX_LIST.indexOf(setsData.radix) > -1) {
+                this.radix = setsData.radix;
+            }
+            if ('insertSize' in setsData) {
+                this.insertSize = !!setsData.insertSize;
+            }
         }
     },
 
