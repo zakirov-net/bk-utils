@@ -121,6 +121,10 @@ new Vue({
     },
 
     methods: {
+        paletteWithZero: function(pal: number): string {
+            return (pal < 10 ? '0' : '') + pal;
+        },
+
         /**
          * Белый или черный цвет текста в ячейке таблицы палитр в зависимости от цвета фона
          */
@@ -193,8 +197,8 @@ new Vue({
             }
         },
 
-        setPalette: function(palette) {
-            this.palette = palette;
+        setPalette: function(palette: number | string) {
+            this.palette = typeof palette === 'number' ? this.paletteWithZero(palette) : palette;
         },
 
         resetCrop: function() {

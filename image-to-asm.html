@@ -127,7 +127,12 @@
             </thead>
             <tbody>
             <tr v-for="(colors, i) in palettesList">
-                <td>{{ (i < 10 ? '0' : '') + i }}</td>
+                <td>
+                    <span v-if="showImage && !error"
+                          class="palette-switcher"
+                          @click="setPalette(i)">{{ paletteWithZero(i) }}</span>
+                    <span v-else>{{ paletteWithZero(i) }}</span>
+                </td>
                 <td class="td-black">#000000</td>
                 <td v-for="color in colors" v-bind:style="{backgroundColor:'#'+color, color: getTdTextColor(color)}">
                     #{{ color }}
@@ -154,7 +159,7 @@
         <p>
             Палитра:
             <select v-model="palette">
-                <option v-for="(n, i) in 16">{{ (i < 10 ? '0' : '') + i }}</option>
+                <option v-for="(n, i) in 16">{{ paletteWithZero(i) }}</option>
             </select>
         </p>
         <p>
