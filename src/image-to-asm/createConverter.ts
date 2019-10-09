@@ -1,11 +1,23 @@
 import Converter from './Converter';
-import {IConverterOrError} from './interfaces';
+import {
+    SCREEN_WIDTH_COLOR,
+    SCREEN_HEIGHT
+} from '../common/constants';
+
+interface IConverterOrError {
+    error: string | undefined;
+    converter: Converter | undefined;
+}
 
 /**
  * Получение конвертера из выбранного файла, принимает дополнительно элемент img,
- * в котором отображаем выбранную картинку.
+ * в котором отображаем выбранную картинку и контейнер для отображения БКшной превьюшки
  */
-export default function getConverterFromFile(file: File, img: HTMLImageElement): Promise<IConverterOrError> {
+export default function createConverter(
+    file: File,
+    img: HTMLImageElement,
+    resultImageContainer: HTMLElement
+): Promise<IConverterOrError> {
     return readFileAsDataURL(file)
         .then(dataURL => setImageSrc(img, dataURL))
         .then(() => {
@@ -15,11 +27,11 @@ export default function getConverterFromFile(file: File, img: HTMLImageElement):
             const imageHeight = img.height;
             if (!imageWidth || !imageHeight) {
                 error = 'Некорректное изображение';
-            } else if (imageWidth > 256 || imageHeight > 256) {
-                error = 'Изображение больше, чем 256x256';
+            } else if (imageWidth > SCREEN_WIDTH_COLOR || imageHeight > SCREEN_HEIGHT) {
+                error = `Изображение больше, чем ${SCREEN_WIDTH_COLOR}x${SCREEN_HEIGHT}`;
             } else {
                 const imageData = getImageData(img, imageWidth, imageHeight);
-                converter = new Converter(imageData, imageWidth, imageHeight, getFileName(file));
+                converter = new Converter(imageData, imageWidth, imageHeight, getFileName(file), resultImageContainer);
             }
             return {error: error, converter: converter};
         });

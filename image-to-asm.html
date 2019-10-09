@@ -98,11 +98,6 @@
             padding: 3px 10px;
             border: 1px solid #000;
         }
-
-        .td-black {
-            background-color: #000;
-            color: #fff;
-        }
     </style>
 
 </head>
@@ -133,7 +128,6 @@
                           @click="setPalette(i)">{{ paletteWithZero(i) }}</span>
                     <span v-else>{{ paletteWithZero(i) }}</span>
                 </td>
-                <td class="td-black">#000000</td>
                 <td v-for="color in colors" v-bind:style="{backgroundColor:'#'+color, color: getTdTextColor(color)}">
                     #{{ color }}
                 </td>
@@ -192,22 +186,22 @@
                     <div class="form-line">
                         <label for="cropX">Смещение по X, байт (4 пикселя):</label>
                         <input id="cropX" type="number" v-model.number="crop.x" maxlength="2" min="0"
-                               v-bind:max="maxWidth"/>
+                               v-bind:max="maxCropWidth"/>
                     </div>
                     <div class="form-line">
                         <label for="cropY">Смещение по Y, строк:</label>
                         <input id="cropY" type="number" v-model.number="crop.y" maxlength="3" min="0"
-                               v-bind:max="maxHeight"/>
+                               v-bind:max="maxCropHeight"/>
                     </div>
                     <div class="form-line">
                         <label for="cropWidth">Ширина, байт (4 пикселя):</label>
                         <input id="cropWidth" type="number" v-model.number="crop.width" maxlength="2" min="0"
-                               v-bind:max="maxWidth"/>
+                               v-bind:max="maxCropWidth"/>
                     </div>
                     <div class="form-line">
                         <label for="cropHeight">Высота, строк:</label>
                         <input id="cropHeight" type="number" v-model.number="crop.height" maxlength="3" min="0"
-                               v-bind:max="maxHeight"/>
+                               v-bind:max="maxCropHeight"/>
                     </div>
                     <div class="form-line">
                         <button @click="resetCrop">Сбросить</button>

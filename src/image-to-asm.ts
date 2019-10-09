@@ -2,15 +2,20 @@ import {
     PREVIEW_PIXEL_WIDTH,
     PREVIEW_PIXEL_HEIGHT,
     STORAGE_KEY_SETS,
-    STORAGE_KEY_CROP,
+    STORAGE_KEY_CROP
+} from './image-to-asm/conf';
+import {
+    PALETTES,
     OUTPUT_TYPES,
     RADIX_LIST,
-    PALETTES
-} from './image-to-asm/conf';
+    SCREEN_WIDTH_IN_BYTES,
+    SCREEN_HEIGHT,
+    PIXELS_PER_BYTE_COLOR
+} from './common/constants';
 import Vue from 'vue';
-import getConverterFromFile from './image-to-asm/getConverterFromFile';
-import {ICropArea} from './image-to-asm/interfaces';
-import storage from './image-to-asm/storage';
+import createConverter from './image-to-asm/createConverter';
+import {ICropArea} from './common/BKBinaryImage';
+import storage from './common/storage';
 
 new Vue({
     el: '#app',
@@ -29,8 +34,8 @@ new Vue({
         crop: {
             x: 0,
             y: 0,
-            width: 64,
-            height: 256
+            width: SCREEN_WIDTH_IN_BYTES,
+            height: SCREEN_HEIGHT
         }
     },
     /**
@@ -77,19 +82,19 @@ new Vue({
         outputTypesList: function() {
             return Object.keys(OUTPUT_TYPES);
         },
-        maxWidth: function() {
-            return this.imageSize ? Math.ceil(this.imageSize.width / 4) : 0;
+        maxCropWidth: function() {
+            return this.imageSize ? Math.ceil(this.imageSize.width / PIXELS_PER_BYTE_COLOR) : 0;
         },
-        maxHeight: function() {
+        maxCropHeight: function() {
             return this.imageSize ? this.imageSize.height : 0;
         },
         cropCorrect: function(): ICropArea {
             const crop = this.crop;
             if (!this.imageSize) return crop;
-            const x = getValue('x', this.maxWidth);
-            const y = getValue('y', this.maxHeight);
-            const width = getValue('width', this.maxWidth - x);
-            const height = getValue('height', this.maxHeight - y);
+            const x = getValue('x', this.maxCropWidth);
+            const y = getValue('y', this.maxCropHeight);
+            const width = getValue('width', this.maxCropWidth - x);
+            const height = getValue('height', this.maxCropHeight - y);
             return {x, y, width, height};
 
             function getValue(field, max) {
@@ -105,11 +110,11 @@ new Vue({
         cropStyles: function() {
             if (!this.imageSize) return;
             const crop = this.cropCorrect;
-            const imageWidth = this.imageSize.width;
-            let right = imageWidth - (crop.x + crop.width) * 4;
+            const imageWidth = this.maxCropWidth * PIXELS_PER_BYTE_COLOR;
+            let right = imageWidth - (crop.x + crop.width) * PIXELS_PER_BYTE_COLOR;
             if (right < 0) right = 0;
-            const bottom = this.maxHeight - crop.height - crop.y;
-            let left = crop.x * 4;
+            const bottom = this.maxCropHeight - crop.height - crop.y;
+            let left = crop.x * PIXELS_PER_BYTE_COLOR;
             if (left > imageWidth) left = imageWidth;
             return {
                 borderWidth: (crop.y * PREVIEW_PIXEL_HEIGHT) + 'px ' +
@@ -145,11 +150,10 @@ new Vue({
             this.$refs.resultImage.innerHTML = '';
             this.useCrop = false;
             this.imageSize = null;
-            this.lastPalette = null;
             const file = event.target.files[0];
             if (!file) return;
             const img = this.$refs.image;
-            getConverterFromFile(file, img).then(result => {
+            createConverter(file, img, this.$refs.resultImage).then(result => {
                 this.showImage = true;
                 if (result.error) {
                     this.error = result.error;
@@ -169,7 +173,7 @@ new Vue({
         },
 
         /**
-         * Конвертирование файла в код и отрисовка превьюшки, если изменилась палитра
+         * Конвертирование файла в код и отрисовка превьюшки
          */
         convertFile: function() {
             if (!this.converter) return;
@@ -190,11 +194,7 @@ new Vue({
                 this.insertSize,
                 this.useCrop ? this.crop : null
             );
-            if (paletteId !== this.lastPalette) {
-                const resultImageDiv = this.$refs.resultImage;
-                this.converter.drawResultImage(resultImageDiv, paletteId);
-                this.lastPalette = paletteId;
-            }
+
         },
 
         setPalette: function(palette: number | string) {
@@ -205,8 +205,8 @@ new Vue({
             this.crop = {
                 x: 0,
                 y: 0,
-                width: this.maxWidth,
-                height: this.maxHeight
+                width: this.maxCropWidth,
+                height: this.maxCropHeight
             };
             storage.remove(STORAGE_KEY_CROP);
             this.convertFile();
