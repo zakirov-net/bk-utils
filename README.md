@@ -24,6 +24,10 @@ npm run build
 ```
 npm run watch
 ```
+Прогон тестов:
+```
+npm run test
+```
 
 ## TODO
 

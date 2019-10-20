@@ -1,6 +1,10 @@
 import {OUTPUT_TYPES} from '../common/constants';
 import BKBinaryImage, {ICropArea} from '../common/BKBinaryImage';
 import bytesToAsm from '../common/bytesToAsm';
+import {
+    ASM_LINE_PREFIX,
+    ASM_NEW_LINE
+} from './conf';
 
 /**
  * Преобразование бинарника в ассемблерный текст
@@ -32,5 +36,5 @@ export default function binaryToAsmText(
         const lineBytes = image.sliceUint8Array(begin, begin + width);
         textLines.push(bytesToAsm(lineBytes, outputType, radix));
     }
-    return textLines.map(line => '\t' + line).join('\r\n');
+    return textLines.map(line => ASM_LINE_PREFIX + line).join(ASM_NEW_LINE);
 }

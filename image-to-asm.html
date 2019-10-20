@@ -39,7 +39,7 @@
             position: relative;
         }
 
-        #resultImage canvas {
+        #resultCanvas {
             display: block;
         }
 
@@ -177,7 +177,7 @@
         </p>
         <div id="resultImageRow">
             <div id="resultImageWrapper">
-                <div id="resultImage" ref="resultImage"></div>
+                <canvas id="resultCanvas" ref="resultCanvas" width="0" height="0"></canvas>
                 <div id="cropper" v-bind:style="cropStyles" v-if="useCrop"></div>
             </div>
             <div id="cropperParams">

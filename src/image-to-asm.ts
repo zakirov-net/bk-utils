@@ -147,13 +147,12 @@ new Vue({
             this.matchedPalettes = null;
             this.converter = null;
             this.result = '';
-            this.$refs.resultImage.innerHTML = '';
             this.useCrop = false;
             this.imageSize = null;
             const file = event.target.files[0];
             if (!file) return;
             const img = this.$refs.image;
-            createConverter(file, img, this.$refs.resultImage).then(result => {
+            createConverter(file, img, this.$refs.resultCanvas).then(result => {
                 this.showImage = true;
                 if (result.error) {
                     this.error = result.error;

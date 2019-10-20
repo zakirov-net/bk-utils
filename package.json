@@ -4,7 +4,8 @@
   "description": "Utils for BK soviet computers",
   "scripts": {
     "build": "webpack",
-    "watch": "webpack --watch"
+    "watch": "webpack --watch",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -14,11 +15,14 @@
   "author": "Lenar Zakirov <lenar@zakirov.net> (https://zakirov.net/)",
   "license": "ISC",
   "devDependencies": {
+    "@types/jest": "^24.0.18",
+    "jest": "^24.9.0",
+    "ts-jest": "^24.1.0",
     "ts-loader": "^6.1.2",
-    "typescript": "^3.6.3",
+    "typescript": "^3.6.4",
     "vue": "^2.6.10",
     "vue-loader": "^15.7.1",
-    "webpack": "^4.41.0",
+    "webpack": "^4.41.1",
     "webpack-cli": "^3.3.9"
   }
 }

@@ -8,6 +8,7 @@
       "dom"
     ],
     "module": "es6",
+    "esModuleInterop": true,
     "target": "es5",
     "jsx": "react",
     "allowJs": true,

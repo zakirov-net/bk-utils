@@ -1,6 +1,8 @@
 import {
     PREVIEW_PIXEL_WIDTH,
-    PREVIEW_PIXEL_HEIGHT
+    PREVIEW_PIXEL_HEIGHT,
+    ASM_NEW_LINE,
+    ASM_LINE_PREFIX
 } from './conf';
 import {OUTPUT_TYPES} from '../common/constants';
 import {
@@ -31,7 +33,7 @@ export default class Converter {
         private readonly _width: number,
         private readonly _height: number,
         private readonly _fileName: string,
-        private readonly _resultImageContainer?: HTMLElement
+        private readonly _resultCanvas?: HTMLCanvasElement
     ) {
         this._pixels = getPixels(imageData);
     }
@@ -59,9 +61,9 @@ export default class Converter {
         }
         let text = binaryToAsmText(this._binary, outputType, radix, insertSize, crop);
         if (text) {
-            text = `\t; ${this._fileName}` +
+            text = ASM_LINE_PREFIX + '; ' + this._fileName +
                 (crop ? ` [${crop.x},${crop.y}/${crop.width},${crop.height}]` : '') +
-                '\r\n' + text;
+                ASM_NEW_LINE + text;
         }
         return text;
     }
@@ -77,18 +79,17 @@ export default class Converter {
      * Нарисовать картинку с превьюшкой в переданном контейнере
      */
     private _drawResultImage(paletteId: number): void {
-        this._resultImageContainer.innerHTML = '';
-        const canvas = document.createElement('canvas');
-        bytesToCanvas(
-            this._binary.getUint8Array(),
-            canvas,
-            {
-                bytesPerLine: this._binary.width,
-                pixelWidth: PREVIEW_PIXEL_WIDTH,
-                pixelHeight: PREVIEW_PIXEL_HEIGHT,
-                paletteId
-            }
-        );
-        this._resultImageContainer.appendChild(canvas);
+        if (this._resultCanvas) {
+            bytesToCanvas(
+                this._binary.getUint8Array(),
+                this._resultCanvas,
+                {
+                    bytesPerLine: this._binary.width,
+                    pixelWidth: PREVIEW_PIXEL_WIDTH,
+                    pixelHeight: PREVIEW_PIXEL_HEIGHT,
+                    paletteId
+                }
+            );
+        }
     }
 }

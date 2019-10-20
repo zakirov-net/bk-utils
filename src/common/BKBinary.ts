@@ -16,7 +16,7 @@ export default class BKBinary {
     constructor(
         input: any,
         {
-            expandBytes = 1024
+            expandBytes = 256
         }: IBKBinaryOptions = {}
     ) {
         this._data = new Uint8Array(input);

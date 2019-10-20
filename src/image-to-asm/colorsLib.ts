@@ -141,7 +141,10 @@ export function getMatchedPalettes(pixels: TPixelsList): string[] {
     const topColors = getTopColors(pixels);
     const stat: TPaletteToStat = topColors
         .reduce((acc, color) => {
-            return acc.concat(colorToPalettes[color])
+            if (color in colorToPalettes) {
+                acc = acc.concat(colorToPalettes[color]);
+            }
+            return acc;
         }, [])
         .reduce((acc: TPaletteToStat, pal) => {
             if (!(pal in acc)) acc[pal] = 0;

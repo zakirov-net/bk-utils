@@ -8,3 +8,7 @@ export const PREVIEW_PIXEL_HEIGHT = DEFAULT_PREVIEW_PIXEL_HEIGHT;
 export const STORAGE_KEY_SETS = 'setsData';
 export const STORAGE_KEY_CROP = 'cropData';
 export const COLOR_DELTA = Math.round(256 * 0.05); // Допуск 5% для цветового компонента
+export const ASM_NEW_LINE = '\r\n';
+export const ASM_LINE_PREFIX = '\t';
+export const ASM_VALUES_PREFIX = '\t';
+export const ASM_VALUES_GLUE = ',';

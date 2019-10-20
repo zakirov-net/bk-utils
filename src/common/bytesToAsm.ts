@@ -1,4 +1,11 @@
-import {DIGITS_COUNT, OUTPUT_TYPES} from './constants';
+import {
+    DIGITS_COUNT,
+    OUTPUT_TYPES
+} from './constants';
+import {
+    ASM_VALUES_PREFIX,
+    ASM_VALUES_GLUE
+} from '../image-to-asm/conf';
 
 /**
  * Получение строки кода из байтов, соответствующих этой строке
@@ -26,5 +33,5 @@ export default function bytesToAsm(
         }
         values.push(valueStr);
     }
-    return `.${ outputType }\t${ values.join(',') }`;
+    return '.' + outputType + ASM_VALUES_PREFIX + values.join(ASM_VALUES_GLUE);
 }
