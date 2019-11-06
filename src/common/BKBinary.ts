@@ -1,80 +1,11 @@
-export interface IBKBinaryOptions {
-    expandBytes? : number;
-}
-
 /**
  * Класс БКшных бинарников
  */
-export default class BKBinary {
-    protected _length: number;
-    protected _data: Uint8Array;
-    protected readonly _expandBytes: number;
+import Binary from './Binary';
 
-    constructor(input: ArrayLike<number>, options?: IBKBinaryOptions);
-    constructor(input: number, options?: IBKBinaryOptions);
-
-    constructor(
-        input: any,
-        {
-            expandBytes = 256
-        }: IBKBinaryOptions = {}
-    ) {
-        this._data = new Uint8Array(input);
-        this._length = this._data.length;
-        this._expandBytes = expandBytes;
-    }
-
-    get length(): number {
-        return this._length;
-    }
-
-    getByte(index: number): number {
-        return this._data[index];
-    }
-
-    setByte(index: number, byte: number): this {
-        this._data[index] = byte;
-        return this;
-    }
-
-    push(...bytes: Array<number>): this {
-        return this.pushArray(bytes, false);
-    }
-
-    pushOnce(...bytes: Array<number>): this {
-        return this.pushArray(bytes, true);
-    }
-
-    pushArray(bytes: ArrayLike<number>, once?: boolean): this {
-        const array = new Uint8Array(bytes);
-        let data = this._data;
-        if (this._length + array.length > data.length) {
-            const delta = (once || array.length > this._expandBytes) ? array.length : this._expandBytes;
-            data = new Uint8Array(this._length + delta);
-            data.set(this._data);
-            this._data = data;
-        }
-        data.set(array, this._length);
-        this._length += array.length;
-        return this;
-    }
-
-    insert(index: number, ...bytes: Array<number>): this {
-        return this.insertArray(index, bytes);
-    }
-
-    insertArray(index: number, array: ArrayLike<number>): this {
-        const data = new Uint8Array(this._data.length + array.length);
-        data.set(this._data.subarray(0, index));
-        data.set(new Uint8Array(array), index);
-        data.set(this._data.subarray(index), index + array.length);
-        this._data = data;
-        this._length += array.length;
-        return this;
-    }
-
-    insertByte(index: number, byte: number): this {
-        return this.insertArray(index, [byte]);
+export default class BKBinary extends Binary {
+    pushWord(word: number): this {
+        return this.pushArray([word & 0xff, (word >> 8) & 0xff]);
     }
 
     insertWord(index: number, word: number): this {
@@ -92,12 +23,18 @@ export default class BKBinary {
         return this;
     }
 
-    getUint8Array(): Uint8Array {
-        return this.sliceUint8Array(0, this._length);
-    }
-
-    sliceUint8Array(begin: number, end: number): Uint8Array {
-        return this._data.subarray(begin, end);
+    getCheckSum(offset: number = 0): number {
+        let checkSum = 0;
+        let data = this._data;
+        const length = this._length;
+        for (let i = offset; i < length; i++) {
+            checkSum += data[i];
+            if (checkSum > 65535) { // переполнение
+                checkSum -= 65536;
+                checkSum++;
+            }
+        }
+        return checkSum;
     }
 
     setBit(index: number, bitPosition: number, bitValue: 0|1 = 1): this {

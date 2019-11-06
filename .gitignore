@@ -1,3 +1,4 @@
 .idea/
 node_modules/
 dist/image-to-asm.js.map
+dist/wav-converter.js.map

@@ -28,5 +28,13 @@ test('BKBinary - push, insert', () => {
     expect(binary.getUint8Array()).toEqual(new Uint8Array([9, 5, 6, 7, 0, 8, 1, 2]));
     binary.insertWord(2, 2826);
     expect(binary.getUint8Array()).toEqual(new Uint8Array([9, 5, 10, 11, 6, 7, 0, 8, 1, 2]));
+    binary.pushWord(65535);
+    expect(binary.getUint8Array()).toEqual(new Uint8Array([9, 5, 10, 11, 6, 7, 0, 8, 1, 2, 255, 255]));
 });
 
+test('BKBinary - checksum', () => {
+    const data = new Uint8Array(258).fill(255);
+    const binary = new BKBinary(data);
+    expect(binary.getCheckSum()).toEqual(255);
+    expect(binary.getCheckSum(1)).toEqual(65535);
+});

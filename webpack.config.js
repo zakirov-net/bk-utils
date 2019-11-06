@@ -2,7 +2,8 @@ const path = require('path');
 
 module.exports = {
   entry: {
-    'image-to-asm': './src/image-to-asm.ts'
+    'image-to-asm': './src/image-to-asm.ts',
+    'wav-converter': './src/wav-converter.ts'
   },
   devtool: 'source-map',
   module: {

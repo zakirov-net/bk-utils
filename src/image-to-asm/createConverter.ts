@@ -4,7 +4,7 @@ import {
     SCREEN_HEIGHT
 } from '../common/constants';
 import {
-    getFileName,
+    correctFileName,
     readFileAsDataURL
 } from '../common/fileLib';
 import {
@@ -40,7 +40,7 @@ export default function createConverter(
             } else {
                 const serviceCanvas = document.createElement('canvas');
                 const imageData = getImageData(img, serviceCanvas);
-                converter = new Converter(imageData, width, height, getFileName(file), resultCanvas);
+                converter = new Converter(imageData, width, height, correctFileName(file.name), resultCanvas);
             }
             return {error: error, converter: converter};
         });

@@ -1,10 +1,10 @@
-import BKBinary, {IBKBinaryOptions} from './BKBinary';
+import BKBinary, {IBinaryOptions} from './Binary';
 import {
     SCREEN_WIDTH_IN_BYTES,
     SCREEN_HEIGHT
 } from './constants';
 
-export interface IBKBinaryImageOptions extends IBKBinaryOptions {
+export interface IBKBinaryImageOptions extends IBinaryOptions {
     width?: number;
     height?: number;
 }
