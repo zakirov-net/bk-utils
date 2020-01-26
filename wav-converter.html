@@ -22,6 +22,8 @@
     Конвертер .bin-файлов БК в .wav-файлы для загрузки через магнитофонный вход
 </h1>
 <input type="file" id="file"><br><br>
+<div id="error"></div>
+<div id="address"></div>
 <label>
     <input type="radio" name="model" value="BK10" checked>
     БК0010 3 МГц - гарантированно прочитается на любой БК
@@ -37,8 +39,6 @@
     <label><input type="checkbox" id="speed" checked> Дополнительное ускорение на 11%</label><br><br>
 </div>
 <button id="convertButton">Сконвертировать</button>
-<br><br>
-<div id="error"></div>
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es5%2Ces6%2Ces7"></script>
 <script src="dist/wav-converter.js"></script>
 </body>

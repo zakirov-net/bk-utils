@@ -38,9 +38,6 @@ export const SAMPLE_RATE_TURBO = 40000;
 export const TUNE_COUNT = 4096;
 export const TUNE_COUNT_SECOND = 10;
 export const TUNE_COUNT_END = 200;
-export const ADDRESS_MIN = 0o320;
-export const ADDRESS_MIN_TURBO = 0o600;
-export const ADDRESS_MAX = 0o177600;
 
 export const TURBO_TUNE_COUNT = 1024;
 export const TURBO_TUNE_COUNT_END = 2;

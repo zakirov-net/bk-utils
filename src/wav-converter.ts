@@ -1,15 +1,10 @@
-import {
-    ADDRESS_MAX,
-    ADDRESS_MIN,
-    ADDRESS_MIN_TURBO,
-    MODELS_LIST
-} from './wav-converter/conf';
+import {MODELS_LIST} from './wav-converter/conf';
 import {
     readFileAsArrayBuffer,
     saveToFile
 } from './common/fileLib';
 import binaryToSound from './wav-converter/binaryToSound';
-import filedataToBinary from './common/filedataToBinary';
+import filedataToBinary, {IBinaryOrError} from './common/filedataToBinary';
 
 Array.from(document.querySelectorAll('[name=model]')).forEach((el) => {
     el.addEventListener('click', function() {
@@ -19,26 +14,39 @@ Array.from(document.querySelectorAll('[name=model]')).forEach((el) => {
 
 getElement('#convertButton').addEventListener('click', convertFile);
 
-// Точка входа при нажатии на кнопку конвертирования
-function convertFile() {
-    const file = getInput('#file').files[0];
-    if (!file) return;
+const blockError = getElement('#error');
+const blockAddress = getElement('#address');
+const fileInput = getInput('#file');
+let fileResult: IBinaryOrError;
+
+fileInput.addEventListener('change', () => {
+    blockError.innerHTML = '';
+    blockAddress.innerHTML = '';
+    const file = fileInput.files[0];
+    if (!file) {
+        fileResult = undefined;
+        return;
+    }
     readFileAsArrayBuffer(file).then((result: ArrayBuffer) => {
-        const model = getInput('[name=model]:checked').value as MODELS_LIST;
-        const {binary, error} = filedataToBinary(
-            result,
-            model === MODELS_LIST.TURBO ? ADDRESS_MIN_TURBO : ADDRESS_MIN,
-            ADDRESS_MAX
-        );
-        if (error) {
-            getElement('#error').innerHTML = error;
+        fileResult = filedataToBinary(result);
+        if (fileResult.error) {
+            blockError.innerHTML = fileResult.error + '<br><br>';
         } else {
-            const baseName = file.name.replace(/\.[^.]*$/, '');
-            const speedBoost = getInput('#speed').checked;
-            const wavFile = binaryToSound(binary, baseName, model, speedBoost);
-            saveToFile(baseName + '.wav', wavFile);
+            blockAddress.innerHTML = 'Адрес загрузки файла: ' + fileResult.binary.getWord(0).toString(8) + '<sub>8</sub><br><br>';
         }
     });
+});
+
+// Точка входа при нажатии на кнопку конвертирования
+function convertFile() {
+    if (fileResult && !fileResult.error) {
+        const file = fileInput.files[0];
+        const model = getInput('[name=model]:checked').value as MODELS_LIST;
+        const baseName = file.name.replace(/\.bin$/i, '');
+        const speedBoost = getInput('#speed').checked;
+        const wavFile = binaryToSound(fileResult.binary, baseName, model, speedBoost);
+        saveToFile(baseName + '.wav', wavFile);
+    }
 }
 
 function modelChanged(model) {
