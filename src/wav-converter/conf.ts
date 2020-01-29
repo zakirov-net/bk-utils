@@ -8,6 +8,8 @@ export enum MODELS_LIST {
     TURBO = 'TURBO'
 }
 
+export const ADDRESS_MIN_TURBO = 0o600;
+
 export const BIT_0 = [
     LEVEL_1, LEVEL_1,
     LEVEL_0, LEVEL_0

@@ -1,8 +1,5 @@
-import {MODELS_LIST} from './wav-converter/conf';
-import {
-    readFileAsArrayBuffer,
-    saveToFile
-} from './common/fileLib';
+import {ADDRESS_MIN_TURBO, MODELS_LIST} from './wav-converter/conf';
+import {readFileAsArrayBuffer, saveToFile} from './common/fileLib';
 import binaryToSound from './wav-converter/binaryToSound';
 import filedataToBinary, {IBinaryOrError} from './common/filedataToBinary';
 
@@ -20,8 +17,8 @@ const fileInput = getInput('#file');
 let fileResult: IBinaryOrError;
 
 fileInput.addEventListener('change', () => {
-    blockError.innerHTML = '';
-    blockAddress.innerHTML = '';
+    hideError();
+    hideAddress();
     const file = fileInput.files[0];
     if (!file) {
         fileResult = undefined;
@@ -30,9 +27,9 @@ fileInput.addEventListener('change', () => {
     readFileAsArrayBuffer(file).then((result: ArrayBuffer) => {
         fileResult = filedataToBinary(result);
         if (fileResult.error) {
-            blockError.innerHTML = fileResult.error + '<br><br>';
+            showError(fileResult.error);
         } else {
-            blockAddress.innerHTML = 'Адрес загрузки файла: ' + fileResult.binary.getWord(0).toString(8) + '<sub>8</sub><br><br>';
+            showAddress(fileResult.binary.getWord(0));
         }
     });
 });
@@ -40,8 +37,13 @@ fileInput.addEventListener('change', () => {
 // Точка входа при нажатии на кнопку конвертирования
 function convertFile() {
     if (fileResult && !fileResult.error) {
+        hideError();
         const file = fileInput.files[0];
-        const model = getInput('[name=model]:checked').value as MODELS_LIST;
+        const model = getModel();
+        if (model === MODELS_LIST.TURBO && fileResult.address < ADDRESS_MIN_TURBO) {
+            showError('Адрес загрузки меньше ' + ADDRESS_MIN_TURBO.toString(8));
+            return;
+        }
         const baseName = file.name.replace(/\.bin$/i, '');
         const speedBoost = getInput('#speed').checked;
         const wavFile = binaryToSound(fileResult.binary, baseName, model, speedBoost);
@@ -49,8 +51,28 @@ function convertFile() {
     }
 }
 
+function getModel(): MODELS_LIST {
+    return getInput('[name=model]:checked').value as MODELS_LIST;
+}
+
 function modelChanged(model) {
     getInput('#speedContainer').style.display = model === MODELS_LIST.TURBO ? 'none' : 'block';
+}
+
+function showError(error) {
+    blockError.innerHTML = error + '<br><br>';
+}
+
+function hideError() {
+    blockError.innerHTML = '';
+}
+
+function showAddress(address) {
+    blockAddress.innerHTML = 'Адрес загрузки файла: ' + address.toString(8) + '<br><br>';
+}
+
+function hideAddress() {
+    blockAddress.innerHTML = '';
 }
 
 function getElement(selector: string): HTMLElement {
