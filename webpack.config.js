@@ -2,6 +2,7 @@ const path = require('path');
 
 module.exports = {
   entry: {
+    'bkd': './src/bkd.ts',
     'image-to-asm': './src/image-to-asm.ts',
     'wav-converter': './src/wav-converter.ts'
   },

@@ -1,8 +1,9 @@
+import Binary from './Binary';
+import {getWord, setWord} from './word';
+
 /**
  * Класс БКшных бинарников
  */
-import Binary from './Binary';
-
 export default class BKBinary extends Binary {
     pushWord(word: number): this {
         return this.pushArray([word & 0xff, (word >> 8) & 0xff]);
@@ -14,12 +15,11 @@ export default class BKBinary extends Binary {
     }
 
     getWord(index: number): number {
-        return this._data[index] + (this._data[index + 1] << 8);
+        return getWord(this._data, index);
     }
 
     setWord(index: number, word: number): this {
-        this._data[index] = word & 0xff;
-        this._data[index + 1] = (word >> 8) & 0xff;
+        setWord(this._data, index, word);
         return this;
     }
 

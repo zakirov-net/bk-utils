@@ -24,3 +24,34 @@ export function getKOI8Bytes(text: string): number[] {
 
     return bytes;
 }
+
+export function getStringFromKOI8Bytes(bytes: ArrayLike<number>): string {
+    let text = '';
+    for (let i = 0; i < bytes.length; i++) {
+        let char = ' ';
+        let code: number = bytes[i];
+        if (code > 32 && code < 128) {
+            char = String.fromCharCode(code);
+        } else if (code >= 192 && code <= 255) {
+            char = CHARS_LIST[code - 192];
+        }
+        text += char;
+    }
+    return text;
+}
+
+export function getLatUpperCaseString(bytes: ArrayLike<number>): string {
+    let text = '';
+    for (let i = 0; i < bytes.length; i++) {
+        let char = ' ';
+        let code: number = bytes[i];
+        if (code >= 96) { // Начиная с маленьких латинских букв
+            code &= ~0o240; // BIC #240,code
+        }
+        if (code > 32 && code < 96) {
+            char = String.fromCharCode(code);
+        }
+        text += char;
+    }
+    return text;
+}

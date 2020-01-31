@@ -1,4 +1,5 @@
-import BKBinary, {IBinaryOptions} from './Binary';
+import BKBinary from './BKBinary';
+import {IBinaryOptions} from './Binary';
 import {
     SCREEN_WIDTH_IN_BYTES,
     SCREEN_HEIGHT

@@ -1,4 +1,5 @@
 .idea/
 node_modules/
+dist/bkd.js.map
 dist/image-to-asm.js.map
 dist/wav-converter.js.map

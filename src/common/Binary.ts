@@ -88,6 +88,10 @@ export default class Binary {
         return this.insertArray(index, [byte]);
     }
 
+    setArray(index: number, array: ArrayLike<number>): this {
+        this._data.set(array, index);
+        return this;
+    }
 
     getUint8Array(): Uint8Array {
         return this.sliceUint8Array(0, this._length);

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Упаковщик .bin-файлов БК в образ загружаемого диска MKDOS</title>
+    <style type="text/css">
+        * {
+            font: 16px Helvetica, Arial, sans-serif;
+        }
+
+        h1 {
+            font-size: 1.3em;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<h1>
+    Упаковщик .bin-файлов БК в образ загружаемого диска MKDOS
+</h1>
+<input type="file" id="file" multiple><br><br>
+<div id="resultFiles"></div>
+<button id="saveButton">Скачать</button>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es5%2Ces6%2Ces7"></script>
+<script src="dist/bkd.js"></script>
+</body>
+</html>
