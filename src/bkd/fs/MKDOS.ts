@@ -101,7 +101,10 @@ export default class MKDOS extends FileSystem implements IFileSystem {
     }
 
     saveFile(file: IMKDOSNewFile): MKDOSFile {
-        // TODO Добавить обрезку имени файла
+        if (!file.name) {
+            throw new Error('Пустое имя файла');
+        }
+        file.name = file.name.substr(0, FILE_NAME_LENGTH).trim();
         if (this.fileExists(file.name)) {
             throw new Error('Файл с таким именем уже существует');
         }
@@ -136,7 +139,10 @@ export default class MKDOS extends FileSystem implements IFileSystem {
     }
 
     mkDir(dir: IMKDOSNewDir): MKDOSFile {
-        // TODO Добавить обрезку имени файла
+        if (!dir.name) {
+            throw new Error('Пустое имя директории');
+        }
+        dir.name = dir.name.substr(0, FILE_NAME_LENGTH - 1).trim();
         if (this.fileExists(dir.name, true)) {
             throw new Error('Директория с таким именем уже существует');
         }
