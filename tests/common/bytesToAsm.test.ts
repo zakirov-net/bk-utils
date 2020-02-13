@@ -1,6 +1,6 @@
-import bytesToAsm from '../../src/common/bytesToAsm';
-import {OUTPUT_TYPES} from '../../src/common/constants';
-import {ASM_VALUES_PREFIX} from '../../src/image-to-asm/conf';
+import bytesToAsm from '@common/bytesToAsm';
+import {OUTPUT_TYPES} from '@common/constants';
+import {ASM_VALUES_PREFIX} from '@image-to-asm/conf';
 
 test('bytesToAsm', () => {
     const bytes = new Uint8Array([255, 255, 1, 0, 228]); // 228 - точки 00, 01, 10, 11

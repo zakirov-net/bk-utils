@@ -1,4 +1,4 @@
-import {getKOI8Bytes, getLatUpperCaseString, getStringFromKOI8Bytes} from '../../src/common/KOI8';
+import {getKOI8Bytes, getLatUpperCaseString, getStringFromKOI8Bytes} from '@common/KOI8';
 
 test('KOI8 - getKOI8Bytes', () => {
     const inputStr = ' .09AaZzАаЯяЮюЪъЁё\u0007\u04d8';

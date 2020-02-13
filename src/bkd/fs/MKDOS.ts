@@ -1,8 +1,8 @@
-import FileSystem, {FILE_TYPES, IFileSystem} from '../FileSystem';
-import Disk, {BLOCK_SIZE} from '../Disk';
-import {FS_TYPES, OS_TYPES} from '../types';
-import {getWord, setWord} from '../../common/word';
-import {getKOI8Bytes, getLatUpperCaseString} from '../../common/KOI8';
+import FileSystem, {FILE_TYPES, IFileSystem} from '@bkd/FileSystem';
+import Disk, {BLOCK_SIZE} from '@bkd/Disk';
+import {FS_TYPES, OS_TYPES} from '@bkd/types';
+import {getWord, setWord} from '@common/word';
+import {getKOI8Bytes, getLatUpperCaseString} from '@common/KOI8';
 import MKDOSFile, {IMKDOSFileRaw} from './MKDOS/MKDOSFile';
 
 export const BLOCKS_COUNT = 1600;

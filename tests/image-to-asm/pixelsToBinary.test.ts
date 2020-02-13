@@ -1,5 +1,5 @@
-import pixelsToBinary from '../../src/image-to-asm/pixelsToBinary';
-import BKBinaryImage from '../../src/common/BKBinaryImage';
+import pixelsToBinary from '@image-to-asm/pixelsToBinary';
+import BKBinaryImage from '@common/BKBinaryImage';
 
 test('pixelsToBinary', () => {
     const pixels = [

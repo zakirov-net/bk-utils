@@ -1,6 +1,13 @@
 {
   "compilerOptions": {
     "outDir": "./dist/",
+    "baseUrl": ".",
+    "paths": {
+      "@common/*": ["./src/common/*"],
+      "@bkd/*": ["./src/bkd/*"],
+      "@image-to-asm/*": ["./src/image-to-asm/*"],
+      "@wav-converter/*": ["./src/wav-converter/*"]
+    },
     "noImplicitAny": false,
     "sourceMap": true,
     "lib": [

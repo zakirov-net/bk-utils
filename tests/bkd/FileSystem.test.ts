@@ -1,9 +1,9 @@
 import fs from 'fs';
-import createFromData from '../../src/bkd/createFromData';
-import MKDOS from '../../src/bkd/fs/MKDOS';
-import extractFilesDump, {dumpStruct} from '../../src/bkd/fs/MKDOS/extractFilesDump';
-import createDisk from '../../src/bkd/fs/MKDOS/createDisk';
-import filedataToBinary from '../../src/common/filedataToBinary';
+import createFromData from '@bkd/createFromData';
+import MKDOS from '@bkd/fs/MKDOS';
+import extractFilesDump, {dumpStruct} from '@bkd/fs/MKDOS/extractFilesDump';
+import createDisk from '@bkd/fs/MKDOS/createDisk';
+import filedataToBinary from '@common/filedataToBinary';
 
 test('FileSystem', () => {
     const FILES_DIR = __dirname + '/../_files/';

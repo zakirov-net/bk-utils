@@ -4,7 +4,7 @@ import {
     LOADER_OFFSET_SIZE,
     LOADER_START_ADDR_PLACEHOLDER
 } from './conf';
-import BKBinary from '../common/BKBinary';
+import BKBinary from '@common/BKBinary';
 
 /**
  * Получение массива байтов загрузчика турбо-режима со вставленным адресом и длиной основного бинарника

@@ -10,10 +10,10 @@ import {
     binaryToSoundBytesTurbo
 } from './soundLib';
 import toWavFile from './toWavFile';
-import Binary from '../common/Binary';
-import BKBinary from '../common/BKBinary';
-import {getKOI8Bytes} from '../common/KOI8';
-import {correctFileName} from '../common/fileLib';
+import Binary from '@common/Binary';
+import BKBinary from '@common/BKBinary';
+import {getKOI8Bytes} from '@common/KOI8';
+import {correctFileName} from '@common/fileLib';
 
 export default function binaryToSound(
     binary: BKBinary,

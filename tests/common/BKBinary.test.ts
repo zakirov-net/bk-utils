@@ -1,4 +1,4 @@
-import BKBinary from '../../src/common/BKBinary';
+import BKBinary from '@common/BKBinary';
 
 test('BKBinary - create, word, byte', () => {
     const binary = new BKBinary(3);

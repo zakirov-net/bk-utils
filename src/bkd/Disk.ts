@@ -1,4 +1,4 @@
-import Binary from '../common/Binary';
+import Binary from '@common/Binary';
 
 export const BLOCK_SIZE = 512;
 

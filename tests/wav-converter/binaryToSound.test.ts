@@ -1,8 +1,8 @@
 import fs from 'fs';
-import filedataToBinary from '../../src/common/filedataToBinary';
-import BKBinary from '../../src/common/BKBinary';
-import binaryToSound from '../../src/wav-converter/binaryToSound';
-import {MODELS_LIST} from '../../src/wav-converter/conf';
+import filedataToBinary from '@common/filedataToBinary';
+import BKBinary from '@common/BKBinary';
+import binaryToSound from '@wav-converter/binaryToSound';
+import {MODELS_LIST} from '@wav-converter/conf';
 
 const FILES_DIR = __dirname + '/../_files/';
 const FILE_NAME = 'test';

@@ -2,7 +2,7 @@ import {
     getColorToIndexByPalette,
     getMatchedPalettes,
     getPixels
-} from '../../src/image-to-asm/colorsLib';
+} from '@image-to-asm/colorsLib';
 
 test('getPixels', () => {
     const imageData = new Uint8ClampedArray([

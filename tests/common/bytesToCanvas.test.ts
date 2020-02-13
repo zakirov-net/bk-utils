@@ -1,5 +1,5 @@
-import bytesToCanvas from '../../src/common/bytesToCanvas';
-import {PIXELS_PER_BYTE_COLOR} from '../../src/common/constants';
+import bytesToCanvas from '@common/bytesToCanvas';
+import {PIXELS_PER_BYTE_COLOR} from '@common/constants';
 import MockCanvas from '../_mocks/MockCanvas';
 import MockCanvasContext2D from '../_mocks/MockCanvasContext2D';
 

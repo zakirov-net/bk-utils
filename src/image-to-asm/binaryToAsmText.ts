@@ -1,6 +1,6 @@
-import {OUTPUT_TYPES} from '../common/constants';
-import BKBinaryImage, {ICropArea} from '../common/BKBinaryImage';
-import bytesToAsm from '../common/bytesToAsm';
+import {OUTPUT_TYPES} from '@common/constants';
+import BKBinaryImage, {ICropArea} from '@common/BKBinaryImage';
+import bytesToAsm from '@common/bytesToAsm';
 import {
     ASM_LINE_PREFIX,
     ASM_NEW_LINE

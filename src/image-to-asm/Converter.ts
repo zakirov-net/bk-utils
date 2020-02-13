@@ -4,16 +4,16 @@ import {
     ASM_NEW_LINE,
     ASM_LINE_PREFIX
 } from './conf';
-import {OUTPUT_TYPES} from '../common/constants';
+import {OUTPUT_TYPES} from '@common/constants';
 import {
     TPixelsList,
     getPixels,
     getMatchedPalettes
 } from './colorsLib';
-import BKBinaryImage, {ICropArea} from '../common/BKBinaryImage';
+import BKBinaryImage, {ICropArea} from '@common/BKBinaryImage';
 import pixelsToBinary from './pixelsToBinary';
 import binaryToAsmText from './binaryToAsmText';
-import bytesToCanvas from '../common/bytesToCanvas';
+import bytesToCanvas from '@common/bytesToCanvas';
 
 interface IImageSize {
     width: number;

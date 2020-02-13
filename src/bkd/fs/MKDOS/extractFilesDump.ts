@@ -1,7 +1,7 @@
-import MKDOS from '../MKDOS';
+import MKDOS from '@bkd/fs/MKDOS';
 import MKDOSFile from './MKDOSFile';
 import {encode} from 'base64-arraybuffer';
-import {FILE_TYPES} from '../../FileSystem';
+import {FILE_TYPES} from '@bkd/FileSystem';
 import {IStructItem} from './createDisk';
 
 interface IQueryStructItem {

@@ -9,8 +9,8 @@ import {
     TUNE_COUNT_END,
     TUNE_COUNT_SECOND, TURBO_AFTER_TUNE, TURBO_BIT_0, TURBO_BIT_1, TURBO_TUNE, TURBO_TUNE_COUNT, TURBO_TUNE_COUNT_END
 } from './conf';
-import Binary from '../common/Binary';
-import BKBinary from '../common/BKBinary';
+import Binary from '@common/Binary';
+import BKBinary from '@common/BKBinary';
 
 /**
  * Функция преобразования бинарных данных в тело wav-файла

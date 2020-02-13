@@ -5,7 +5,7 @@ import {
 import {
     ASM_VALUES_PREFIX,
     ASM_VALUES_GLUE
-} from '../image-to-asm/conf';
+} from '@image-to-asm/conf';
 
 /**
  * Получение строки кода из байтов, соответствующих этой строке

@@ -1,4 +1,5 @@
 const path = require('path');
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -20,7 +21,8 @@ module.exports = {
     extensions: [ '.tsx', '.ts', '.js' ],
     alias: {
       'vue$': 'vue/dist/vue.esm.js'
-    }
+    },
+    plugins: [new TsconfigPathsPlugin()]
   },
   output: {
     filename: '[name].js',

@@ -1,5 +1,5 @@
 import createDisk from './fs/MKDOS/createDisk';
-import filedataToBinary from '../common/filedataToBinary';
+import filedataToBinary from '@common/filedataToBinary';
 
 export interface IFile {
     name: string;

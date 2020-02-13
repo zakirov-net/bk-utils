@@ -1,5 +1,5 @@
 import {COLOR_DELTA} from './conf';
-import {PALETTES} from '../common/constants';
+import {PALETTES} from '@common/constants';
 
 export type TPixelsList = Array<string | null>;
 

@@ -1,9 +1,9 @@
-import BKBinaryImage from '../common/BKBinaryImage';
+import BKBinaryImage from '@common/BKBinaryImage';
 import {
     TPixelsList,
     getColorToIndexByPalette
 } from './colorsLib';
-import {PIXELS_PER_BYTE_COLOR} from '../common/constants';
+import {PIXELS_PER_BYTE_COLOR} from '@common/constants';
 
 /**
  * Получение объекта БКшных бинарных данных из картинки

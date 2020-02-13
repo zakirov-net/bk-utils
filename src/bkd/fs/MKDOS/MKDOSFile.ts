@@ -1,6 +1,6 @@
-import {FILE_TYPES, IFile} from '../../FileSystem';
-import {getWord} from '../../../common/word';
-import {getLatUpperCaseString, getStringFromKOI8Bytes} from '../../../common/KOI8';
+import {FILE_TYPES, IFile} from '@bkd/FileSystem';
+import {getWord} from '@common/word';
+import {getLatUpperCaseString, getStringFromKOI8Bytes} from '@common/KOI8';
 import MKDOS, {
     FILE_ADDRESS_WORD,
     FILE_BLOCK_BEGIN_WORD,
@@ -16,7 +16,7 @@ import MKDOS, {
     FILE_STATUS_DELETED,
     FILE_STATUS_LOGIC_DISK,
     FILE_STATUS_PROTECTED
-} from '../MKDOS';
+} from '@bkd/fs/MKDOS';
 
 const STATUS_TO_TYPE = {
     [FILE_STATUS_LOGIC_DISK]: FILE_TYPES.LOGIC,

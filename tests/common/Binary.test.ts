@@ -1,4 +1,4 @@
-import Binary from '../../src/common/Binary';
+import Binary from '@common/Binary';
 
 test('Binary - create, byte, slice', () => {
     const binary = new Binary(3);

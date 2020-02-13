@@ -1,4 +1,4 @@
-import {getWord} from '../common/word';
+import {getWord} from '@common/word';
 import MKDOS, {LABEL_MICRODOS_OFFSET, LABEL_MICRODOS_VALUE, LABEL_MKDOS_OFFSET, LABEL_MKDOS_VALUE} from './fs/MKDOS';
 import Disk from './Disk';
 import {IFileSystem} from './FileSystem';

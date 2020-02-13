@@ -1,7 +1,7 @@
 import {
     DEFAULT_PREVIEW_PIXEL_HEIGHT,
     DEFAULT_PREVIEW_PIXEL_WIDTH
-} from '../common/constants';
+} from '@common/constants';
 
 export const PREVIEW_PIXEL_WIDTH = DEFAULT_PREVIEW_PIXEL_WIDTH;
 export const PREVIEW_PIXEL_HEIGHT = DEFAULT_PREVIEW_PIXEL_HEIGHT;

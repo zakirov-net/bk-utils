@@ -4,10 +4,10 @@ import MKDOS, {
     LABEL_MICRODOS_OFFSET,
     LABEL_MICRODOS_VALUE, LABEL_MKDOS_OFFSET, LABEL_MKDOS_VALUE,
     TOTAL_BLOCKS_OFFSET
-} from '../MKDOS';
-import Disk, {BLOCK_SIZE} from '../../Disk';
+} from '@bkd/fs/MKDOS';
+import Disk, {BLOCK_SIZE} from '@bkd/Disk';
 import {decode} from 'base64-arraybuffer';
-import {setWord} from '../../../common/word';
+import {setWord} from '@common/word';
 import {BOOT_LOADER_BASE64, diskDump} from './diskDump';
 import MKDOSFile from './MKDOSFile';
 

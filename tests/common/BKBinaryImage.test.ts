@@ -1,4 +1,4 @@
-import BKBinaryImage from '../../src/common/BKBinaryImage';
+import BKBinaryImage from '@common/BKBinaryImage';
 
 test('BKBinaryImage - createImage', () => {
     const binaryImage = BKBinaryImage.createImage(3, 2);

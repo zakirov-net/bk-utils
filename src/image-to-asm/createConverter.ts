@@ -2,15 +2,15 @@ import Converter from './Converter';
 import {
     SCREEN_WIDTH_COLOR,
     SCREEN_HEIGHT
-} from '../common/constants';
+} from '@common/constants';
 import {
     correctFileName,
     readFileAsDataURL
-} from '../common/fileLib';
+} from '@common/fileLib';
 import {
     getImageData,
     setImageSrc
-} from '../common/imageLib';
+} from '@common/imageLib';
 
 interface IConverterOrError {
     error: string | undefined;

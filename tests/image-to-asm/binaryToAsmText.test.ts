@@ -1,12 +1,12 @@
-import BKBinaryImage, {ICropArea} from '../../src/common/BKBinaryImage';
+import BKBinaryImage, {ICropArea} from '@common/BKBinaryImage';
 import {
     ASM_LINE_PREFIX,
     ASM_NEW_LINE,
     ASM_VALUES_GLUE,
     ASM_VALUES_PREFIX
-} from '../../src/image-to-asm/conf';
-import binaryToAsmText from '../../src/image-to-asm/binaryToAsmText';
-import {OUTPUT_TYPES} from '../../src/common/constants';
+} from '@image-to-asm/conf';
+import binaryToAsmText from '@image-to-asm/binaryToAsmText';
+import {OUTPUT_TYPES} from '@common/constants';
 
 const binaryImage = new BKBinaryImage([213, 59, 187, 245, 7, 142], {width: 3, height: 2});
 
