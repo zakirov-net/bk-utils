@@ -5,6 +5,7 @@ import {
     ASM_LINE_PREFIX,
     ASM_NEW_LINE
 } from './conf';
+import BKBinary from '@common/BKBinary';
 
 /**
  * Преобразование бинарника в ассемблерный текст
@@ -22,11 +23,13 @@ export default function binaryToAsmText(
 
     const textLines: string[] = [];
     if (insertSize) {
-        const sizesLine = [
-            outputType === OUTPUT_TYPES.WORD ? Math.ceil(width / 2) : width,
-            height
-        ];
-        textLines.push(bytesToAsm(sizesLine, OUTPUT_TYPES.BYTE, radix));
+        const sizesLine = new BKBinary(4);
+        sizesLine.setWord(
+            0,
+            outputType === OUTPUT_TYPES.WORD ? Math.ceil(width / 2) : width
+        );
+        sizesLine.setWord(2, height);
+        textLines.push(bytesToAsm(sizesLine.getUint8Array(), OUTPUT_TYPES.WORD, radix));
     }
 
     const image = cropArea ? imageBinary.crop(cropArea) : imageBinary;

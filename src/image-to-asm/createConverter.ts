@@ -1,8 +1,8 @@
 import Converter from './Converter';
 import {
-    SCREEN_WIDTH_COLOR,
-    SCREEN_HEIGHT
-} from '@common/constants';
+    IMAGE_WIDTH_MAX,
+    IMAGE_HEIGHT_MAX
+} from './conf';
 import {
     correctFileName,
     readFileAsDataURL
@@ -35,8 +35,8 @@ export default function createConverter(
             const height = img.height;
             if (!width || !height) {
                 error = 'Некорректное изображение';
-            } else if (width > SCREEN_WIDTH_COLOR || height > SCREEN_HEIGHT) {
-                error = `Изображение больше, чем ${SCREEN_WIDTH_COLOR}x${SCREEN_HEIGHT}`;
+            } else if (width > IMAGE_WIDTH_MAX || height > IMAGE_HEIGHT_MAX) {
+                error = `Изображение больше, чем ${IMAGE_WIDTH_MAX}x${IMAGE_HEIGHT_MAX}`;
             } else {
                 const serviceCanvas = document.createElement('canvas');
                 const imageData = getImageData(img, serviceCanvas);

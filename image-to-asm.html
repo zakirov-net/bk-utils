@@ -17,8 +17,8 @@
         }
 
         #image {
-            max-width: 300px;
-            max-height: 300px;
+            max-width: 600px;
+            max-height: 600px;
         }
 
         #result {
@@ -185,7 +185,7 @@
                 <div v-show="useCrop">
                     <div class="form-line">
                         <label for="cropX">Смещение по X, байт (4 пикселя):</label>
-                        <input id="cropX" type="number" v-model.number="crop.x" maxlength="2" min="0"
+                        <input id="cropX" type="number" v-model.number="crop.x" maxlength="3" min="0"
                                v-bind:max="maxCropWidth"/>
                     </div>
                     <div class="form-line">
@@ -195,7 +195,7 @@
                     </div>
                     <div class="form-line">
                         <label for="cropWidth">Ширина, байт (4 пикселя):</label>
-                        <input id="cropWidth" type="number" v-model.number="crop.width" maxlength="2" min="0"
+                        <input id="cropWidth" type="number" v-model.number="crop.width" maxlength="3" min="0"
                                v-bind:max="maxCropWidth"/>
                     </div>
                     <div class="form-line">

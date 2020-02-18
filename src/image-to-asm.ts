@@ -2,20 +2,20 @@ import {
     PREVIEW_PIXEL_WIDTH,
     PREVIEW_PIXEL_HEIGHT,
     STORAGE_KEY_SETS,
-    STORAGE_KEY_CROP
-} from './image-to-asm/conf';
+    STORAGE_KEY_CROP,
+    IMAGE_WIDTH_IN_BYTES_MAX,
+    IMAGE_HEIGHT_MAX
+} from '@image-to-asm/conf';
 import {
     PALETTES,
     OUTPUT_TYPES,
     RADIX_LIST,
-    SCREEN_WIDTH_IN_BYTES,
-    SCREEN_HEIGHT,
     PIXELS_PER_BYTE_COLOR
-} from './common/constants';
+} from '@common/constants';
 import Vue from 'vue';
-import createConverter from './image-to-asm/createConverter';
-import {ICropArea} from './common/BKBinaryImage';
-import storage from './common/storage';
+import createConverter from '@image-to-asm/createConverter';
+import {ICropArea} from '@common/BKBinaryImage';
+import storage from '@common/storage';
 
 new Vue({
     el: '#app',
@@ -34,8 +34,8 @@ new Vue({
         crop: {
             x: 0,
             y: 0,
-            width: SCREEN_WIDTH_IN_BYTES,
-            height: SCREEN_HEIGHT
+            width: IMAGE_WIDTH_IN_BYTES_MAX,
+            height: IMAGE_HEIGHT_MAX
         }
     },
     /**
