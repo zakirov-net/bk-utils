@@ -4,8 +4,13 @@
   "description": "Utils for BK soviet computers",
   "scripts": {
     "build": "webpack",
+    "build-cli": "webpack --config webpack-cli.config.js",
     "watch": "webpack --watch",
+    "watch-cli": "webpack --watch --config webpack-cli.config.js",
     "test": "jest"
+  },
+  "bin": {
+    "bk-utils-bkd": "./bin/bk-utils-bkd.js"
   },
   "repository": {
     "type": "git",
@@ -15,10 +20,14 @@
   "author": "Lenar Zakirov <lenar@zakirov.net> (https://zakirov.net/)",
   "license": "ISC",
   "devDependencies": {
+    "@types/glob": "^7.1.1",
     "@types/jest": "^24.9.1",
+    "@types/minimist": "^1.2.0",
     "@types/node": "^12.12.27",
     "base64-arraybuffer": "^0.2.0",
+    "glob": "^7.1.6",
     "jest": "^24.9.0",
+    "minimist": "^1.2.5",
     "ts-jest": "^24.3.0",
     "ts-loader": "^6.2.1",
     "tsconfig-paths-webpack-plugin": "^3.2.0",
