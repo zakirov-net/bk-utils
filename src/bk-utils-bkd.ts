@@ -1,9 +1,6 @@
-import '@common/oldNodejsPolyfills';
+import '@cli/oldNodejsPolyfills';
 import minimist from 'minimist';
-import path from 'path';
-import fs from 'fs';
-import {sync as globSync} from 'glob';
-import {correctFileName} from '@common/fileLib';
+import {getAllFiles, readFiles, writeFile} from '@cli/ioLib';
 import filesToDisk from '@bkd/filesToDisk';
 
 const args = minimist(process.argv.slice(2), {
@@ -20,17 +17,7 @@ if (!fileNames.length) {
     exitWithError('Не заданы подходящие для упаковки файлы');
 }
 
-const files = fileNames.reduce((acc, fileName) => {
-    try {
-        const data = fs.readFileSync(fileName);
-        const name = correctFileName(path.basename(fileName)).replace(/\.bin$/i, '');
-        acc.push({name, data});
-    } catch (e) {
-        console.error('Не удалось считать файл: ' + fileName);
-    }
-    return acc;
-}, []);
-
+const files = readFiles(fileNames);
 if (!files.length) {
     exitWithError('Нет файлов для упаковки в образ диска');
 }
@@ -44,14 +31,8 @@ if (!result.disk) {
 }
 
 const outName = args.out || result.files.filter(file => !file.error)[0].name + '.bkd';
-let buffer: Buffer;
 try {
-    buffer = Buffer.from(result.disk);
-} catch (e) {
-    buffer = new Buffer(result.disk); // Для старых Node.js
-}
-try {
-    fs.writeFileSync(outName, buffer);
+    writeFile(outName, result.disk);
     console.log('Образ диска записан в файл ' + outName);
 } catch (e) {
     exitWithError('Не удалось записать образ диска в файл ' + outName);
@@ -61,11 +42,4 @@ try {
 function exitWithError(error) {
     console.error(error);
     process.exit(1);
-}
-
-function getAllFiles(inputList: string[]): string[] {
-    const files: string[] = inputList.reduce((acc, pattern) => {
-        return acc.concat(globSync(pattern, {nodir: true}));
-    }, []);
-    return [...new Set(files)]; // Уникальные файлы, на всякий случай.
 }

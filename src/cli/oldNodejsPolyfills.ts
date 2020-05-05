@@ -15,7 +15,7 @@ if (!Object.entries) {
 }
 
 /**
- * String.prototype.padStart() polyfill
+ * String.prototype.padEnd() polyfill
  * https://github.com/uxitten/polyfill/blob/master/string.polyfill.js
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/padEnd
  */

@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 17);
+/******/ 	return __webpack_require__(__webpack_require__.s = 33);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -98,30 +98,6 @@ module.exports = require("fs");
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * Получение двухбайтного слова (LE)
- */
-function getWord(data, index) {
-    return data[index] + (data[index + 1] << 8);
-}
-exports.getWord = getWord;
-/**
- * Запись двухбайтного слова (LE)
- */
-function setWord(data, index, word) {
-    data[index] = word & 0xff;
-    data[index + 1] = (word >> 8) & 0xff;
-}
-exports.setWord = setWord;
-
-
-/***/ }),
-/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = minimatch
@@ -1050,13 +1026,13 @@ function regExpEscape (s) {
 
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, exports) {
 
 module.exports = require("util");
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1083,7 +1059,118 @@ module.exports.win32 = win32;
 
 
 /***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * Получение двухбайтного слова (LE)
+ */
+function getWord(data, index) {
+    return data[index] + (data[index + 1] << 8);
+}
+exports.getWord = getWord;
+/**
+ * Запись двухбайтного слова (LE)
+ */
+function setWord(data, index, word) {
+    data[index] = word & 0xff;
+    data[index + 1] = (word >> 8) & 0xff;
+}
+exports.setWord = setWord;
+
+
+/***/ }),
 /* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var Binary_1 = __importDefault(__webpack_require__(13));
+var word_1 = __webpack_require__(5);
+/**
+ * Класс БКшных бинарников
+ */
+var BKBinary = /** @class */ (function (_super) {
+    __extends(BKBinary, _super);
+    function BKBinary() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    BKBinary.prototype.pushWord = function (word) {
+        return this.pushArray([word & 0xff, (word >> 8) & 0xff]);
+    };
+    BKBinary.prototype.insertWord = function (index, word) {
+        this.insertArray(index, [0, 0]);
+        return this.setWord(index, word);
+    };
+    BKBinary.prototype.getWord = function (index) {
+        return word_1.getWord(this._data, index);
+    };
+    BKBinary.prototype.setWord = function (index, word) {
+        word_1.setWord(this._data, index, word);
+        return this;
+    };
+    BKBinary.prototype.getCheckSum = function (offset) {
+        if (offset === void 0) { offset = 0; }
+        var checkSum = 0;
+        var data = this._data;
+        var length = this._length;
+        for (var i = offset; i < length; i++) {
+            checkSum += data[i];
+            if (checkSum > 65535) { // переполнение
+                checkSum -= 65536;
+                checkSum++;
+            }
+        }
+        return checkSum;
+    };
+    BKBinary.prototype.setBit = function (index, bitPosition, bitValue) {
+        if (bitValue === void 0) { bitValue = 1; }
+        return this._setBits(index, bitValue, bitPosition, 1);
+    };
+    BKBinary.prototype.setBitsPair = function (index, bitsPosition, bitsValue) {
+        if (bitsValue === void 0) { bitsValue = 3; }
+        return this._setBits(index, bitsValue, bitsPosition * 2, 3);
+    };
+    BKBinary.prototype._setBits = function (index, bitsValue, bitsPosition, clearMask) {
+        var useWord = bitsPosition > 7;
+        var value = useWord ? this.getWord(index) : this.getByte(index);
+        value &= ~(clearMask << bitsPosition);
+        value |= (bitsValue << bitsPosition);
+        if (useWord) {
+            this.setWord(index, value);
+        }
+        else {
+            this.setByte(index, value);
+        }
+        return this;
+    };
+    return BKBinary;
+}(Binary_1.default));
+exports.default = BKBinary;
+
+
+/***/ }),
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Approach:
@@ -1129,26 +1216,26 @@ module.exports.win32 = win32;
 module.exports = glob
 
 var fs = __webpack_require__(1)
-var rp = __webpack_require__(7)
-var minimatch = __webpack_require__(3)
+var rp = __webpack_require__(8)
+var minimatch = __webpack_require__(2)
 var Minimatch = minimatch.Minimatch
 var inherits = __webpack_require__(24)
 var EE = __webpack_require__(26).EventEmitter
 var path = __webpack_require__(0)
-var assert = __webpack_require__(8)
-var isAbsolute = __webpack_require__(5)
+var assert = __webpack_require__(9)
+var isAbsolute = __webpack_require__(4)
 var globSync = __webpack_require__(27)
-var common = __webpack_require__(9)
+var common = __webpack_require__(10)
 var alphasort = common.alphasort
 var alphasorti = common.alphasorti
 var setopts = common.setopts
 var ownProp = common.ownProp
 var inflight = __webpack_require__(28)
-var util = __webpack_require__(4)
+var util = __webpack_require__(3)
 var childrenIgnored = common.childrenIgnored
 var isIgnored = common.isIgnored
 
-var once = __webpack_require__(11)
+var once = __webpack_require__(12)
 
 function glob (pattern, options, cb) {
   if (typeof options === 'function') cb = options, options = {}
@@ -1879,7 +1966,7 @@ Glob.prototype._stat2 = function (f, abs, er, stat, cb) {
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = realpath
@@ -1951,13 +2038,13 @@ function unmonkeypatch () {
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports) {
 
 module.exports = require("assert");
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports.alphasort = alphasort
@@ -1975,8 +2062,8 @@ function ownProp (obj, field) {
 }
 
 var path = __webpack_require__(0)
-var minimatch = __webpack_require__(3)
-var isAbsolute = __webpack_require__(5)
+var minimatch = __webpack_require__(2)
+var isAbsolute = __webpack_require__(4)
 var Minimatch = minimatch.Minimatch
 
 function alphasorti (a, b) {
@@ -2203,7 +2290,7 @@ function childrenIgnored (self, path) {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports) {
 
 // Returns a wrapper function that returns a wrapped callback
@@ -2242,10 +2329,10 @@ function wrappy (fn, cb) {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var wrappy = __webpack_require__(10)
+var wrappy = __webpack_require__(11)
 module.exports = wrappy(once)
 module.exports.strict = wrappy(onceStrict)
 
@@ -2290,397 +2377,7 @@ function onceStrict (fn) {
 
 
 /***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var FileSystem_1 = __importStar(__webpack_require__(13));
-var Disk_1 = __webpack_require__(14);
-var types_1 = __webpack_require__(32);
-var word_1 = __webpack_require__(2);
-var KOI8_1 = __webpack_require__(16);
-var MKDOSFile_1 = __importDefault(__webpack_require__(33));
-exports.BLOCKS_COUNT = 1600;
-exports.CATALOG_BLOCKS_COUNT = 20;
-exports.CATALOG_BEGIN_OFFSET = 320;
-exports.TOTAL_FILES_OFFSET = 24;
-exports.TOTAL_BLOCKS_OFFSET = 26;
-exports.LABEL_MICRODOS_OFFSET = 256;
-exports.LABEL_MICRODOS_VALUE = 42798;
-exports.LABEL_MKDOS_OFFSET = 258;
-exports.LABEL_MKDOS_VALUE = 21260;
-exports.BLOCKS_COUNT_OFFSET = 310;
-exports.FIRST_FILE_BLOCK_OFFSET = 312;
-exports.FILE_RECORD_LENGTH = 24;
-exports.FILE_STATUS_BYTE = 0;
-exports.FILE_DIR_ID_BYTE = 0;
-exports.FILE_PARENT_ID_BYTE = 1;
-exports.FILE_NAME_BEGIN = 2;
-exports.FILE_NAME_LENGTH = 14;
-exports.FILE_IS_DIR_MARKER = 127;
-exports.FILE_BLOCK_BEGIN_WORD = 16;
-exports.FILE_BLOCKS_COUNT_WORD = 18;
-exports.FILE_ADDRESS_WORD = 20;
-exports.FILE_LINK_DRIVE_BYTE = exports.FILE_ADDRESS_WORD;
-exports.FILE_SIZE_WORD = 22;
-exports.FILE_STATUS_NORMAL = 0;
-exports.FILE_STATUS_PROTECTED = 1;
-exports.FILE_STATUS_LOGIC_DISK = 2;
-exports.FILE_STATUS_BAD = 128;
-exports.FILE_STATUS_DELETED = 255;
-var FILE_TYPES_IGNORE_FOR_COUNT = [exports.FILE_STATUS_BAD, exports.FILE_STATUS_DELETED];
-var MKDOS = /** @class */ (function (_super) {
-    __extends(MKDOS, _super);
-    function MKDOS(disk) {
-        var _this = _super.call(this, disk) || this;
-        _this.fsType = types_1.FS_TYPES.MicroDOS;
-        _this.osType = types_1.OS_TYPES.MKDOS;
-        _this._filesList = [];
-        _this._filesByNameLatUC = {};
-        _this._dirs = {};
-        _this._dirFiles = {};
-        _this._blocks = new Array(exports.BLOCKS_COUNT).fill(undefined);
-        _this._initFilesList();
-        return _this;
-    }
-    MKDOS.prototype.fileExists = function (name, isDir) {
-        if (isDir === void 0) { isDir = false; }
-        var nameLatUC = this._fileNameToLatUC(name, isDir);
-        return nameLatUC in this._filesByNameLatUC;
-    };
-    MKDOS.prototype.getFileByName = function (name, isDir) {
-        if (isDir === void 0) { isDir = false; }
-        var nameLatUC = this._fileNameToLatUC(name, isDir);
-        return this._filesByNameLatUC[nameLatUC];
-    };
-    MKDOS.prototype.getFilesByDir = function (dir) {
-        var dirId = dir ? dir.dirId : 0;
-        return __spread(this._dirFiles[dirId]);
-    };
-    MKDOS.prototype.getFileContent = function (file) {
-        switch (file.type) {
-            case FileSystem_1.FILE_TYPES.FILE:
-                var blocksContent = this._disk.read(file.blockBegin, file.blocksCount);
-                return blocksContent.subarray(0, file.size);
-            case FileSystem_1.FILE_TYPES.DIR:
-                return this.getFilesByDir(file);
-        }
-    };
-    MKDOS.prototype.getFilesList = function () {
-        return __spread(this._filesList);
-    };
-    MKDOS.prototype.saveFile = function (file) {
-        if (!file.name) {
-            throw new Error('Пустое имя файла');
-        }
-        file.name = file.name.substr(0, exports.FILE_NAME_LENGTH).trim();
-        if (this.fileExists(file.name)) {
-            throw new Error('Файл с таким именем уже существует');
-        }
-        var fileSize = file.content.length;
-        var blocksCount = Math.ceil(fileSize / Disk_1.BLOCK_SIZE);
-        var blockBegin = this._findRoomForFile(blocksCount);
-        if (!blockBegin) {
-            throw new Error('Недостаточно места на диске');
-        }
-        var filesCount = this._filesList.length;
-        var offset = filesCount ? this._filesList[filesCount - 1].fsOffset + exports.FILE_RECORD_LENGTH : exports.CATALOG_BEGIN_OFFSET;
-        // TODO Добавить проверку, есть ли место в каталоге
-        var fileData = new Uint8Array(exports.FILE_RECORD_LENGTH);
-        fileData[exports.FILE_STATUS_BYTE] = file.isProtected ? exports.FILE_STATUS_PROTECTED : exports.FILE_STATUS_NORMAL;
-        fileData[exports.FILE_PARENT_ID_BYTE] = file.parent ? file.parent.dirId : 0;
-        var fileNameBytes = KOI8_1.getKOI8Bytes(file.name.padEnd(exports.FILE_NAME_LENGTH));
-        fileData.set(fileNameBytes, exports.FILE_NAME_BEGIN);
-        word_1.setWord(fileData, exports.FILE_BLOCK_BEGIN_WORD, blockBegin);
-        word_1.setWord(fileData, exports.FILE_BLOCKS_COUNT_WORD, blocksCount);
-        word_1.setWord(fileData, exports.FILE_ADDRESS_WORD, file.address);
-        word_1.setWord(fileData, exports.FILE_SIZE_WORD, fileSize);
-        var track0 = this._track0;
-        track0.set(fileData, offset);
-        var totalFiles = word_1.getWord(track0, exports.TOTAL_FILES_OFFSET) + 1;
-        var totalBlocks = word_1.getWord(track0, exports.TOTAL_BLOCKS_OFFSET) + blocksCount;
-        word_1.setWord(track0, exports.TOTAL_FILES_OFFSET, totalFiles);
-        word_1.setWord(track0, exports.TOTAL_BLOCKS_OFFSET, totalBlocks);
-        this._disk
-            .write(0, track0)
-            .write(blockBegin, file.content);
-        return this._addFile({ offset: offset, fileData: fileData });
-    };
-    MKDOS.prototype.mkDir = function (dir) {
-        if (!dir.name) {
-            throw new Error('Пустое имя директории');
-        }
-        dir.name = dir.name.substr(0, exports.FILE_NAME_LENGTH - 1).trim();
-        if (this.fileExists(dir.name, true)) {
-            throw new Error('Директория с таким именем уже существует');
-        }
-        var filesCount = this._filesList.length;
-        var offset;
-        var blockBegin;
-        if (filesCount) {
-            var lastFile = this._filesList[filesCount - 1];
-            offset = lastFile.fsOffset + exports.FILE_RECORD_LENGTH;
-            blockBegin = lastFile.blockBegin + lastFile.blocksCount;
-        }
-        else {
-            offset = exports.CATALOG_BEGIN_OFFSET;
-            blockBegin = exports.CATALOG_BLOCKS_COUNT;
-        }
-        var dirIds = Object.keys(this._dirs);
-        var dirId = dirIds.length ? Math.max.apply(null, dirIds) + 1 : 1;
-        if (dirId > 255) {
-            throw new Error('Слишком много директорий');
-        }
-        // TODO Добавить проверку, есть ли место в каталоге
-        var fileData = new Uint8Array(exports.FILE_RECORD_LENGTH);
-        fileData[exports.FILE_DIR_ID_BYTE] = dirId;
-        fileData[exports.FILE_PARENT_ID_BYTE] = dir.parent ? dir.parent.dirId : 0;
-        var fileNameBytes = KOI8_1.getKOI8Bytes(dir.name.padEnd(exports.FILE_NAME_LENGTH - 1));
-        fileData[exports.FILE_NAME_BEGIN] = exports.FILE_IS_DIR_MARKER;
-        fileData.set(fileNameBytes, exports.FILE_NAME_BEGIN + 1);
-        word_1.setWord(fileData, exports.FILE_BLOCK_BEGIN_WORD, blockBegin);
-        var track0 = this._track0;
-        track0.set(fileData, offset);
-        var totalFiles = word_1.getWord(track0, exports.TOTAL_FILES_OFFSET) + 1;
-        word_1.setWord(track0, exports.TOTAL_FILES_OFFSET, totalFiles);
-        this._disk
-            .write(0, track0);
-        return this._addFile({ offset: offset, fileData: fileData });
-    };
-    MKDOS.prototype._findRoomForFile = function (needBlocksCount) {
-        for (var i = exports.CATALOG_BLOCKS_COUNT; i < exports.BLOCKS_COUNT; i++) {
-            if (this._blocks[i]) {
-                continue;
-            }
-            if (exports.BLOCKS_COUNT - i < needBlocksCount) {
-                // Уже точно нет места
-                return;
-            }
-            var blockBegin = i;
-            var blockEnd = blockBegin + needBlocksCount;
-            for (; i < blockEnd; i++) {
-                // Проверяем, есть ли непрерывное пространство
-                if (this._blocks[i]) {
-                    break;
-                }
-            }
-            if (i === blockEnd) {
-                // Нашли достаточно места
-                return blockBegin;
-            }
-        }
-    };
-    MKDOS.prototype._fileNameToLatUC = function (name, isDir) {
-        if (isDir === void 0) { isDir = false; }
-        return (isDir ? '_' : '') + KOI8_1.getLatUpperCaseString(KOI8_1.getKOI8Bytes(name));
-    };
-    MKDOS.prototype._initFilesList = function () {
-        this._track0 = this._disk.read(0, exports.CATALOG_BLOCKS_COUNT);
-        Array.from(this._generateFilesData(this._track0)).forEach(this._addFile.bind(this));
-    };
-    MKDOS.prototype._addFile = function (raw) {
-        var file = new MKDOSFile_1.default(this);
-        file.setFromRawData(raw);
-        this._filesList.push(file);
-        this._processFile(file);
-        return file;
-    };
-    MKDOS.prototype._processFile = function (file) {
-        if (file.type === FileSystem_1.FILE_TYPES.DIR) {
-            this._dirs[file.dirId] = file;
-        }
-        if (!this._dirFiles[file.parentId]) {
-            this._dirFiles[file.parentId] = [];
-        }
-        this._dirFiles[file.parentId].push(file);
-        if (file.nameLatUC) {
-            this._filesByNameLatUC[file.nameLatUC] = file;
-        }
-        if (file.blocksCount > 0) {
-            this._blocks.fill(file, file.blockBegin, file.blockBegin + file.blocksCount);
-        }
-    };
-    MKDOS.prototype._generateFilesData = function (track0) {
-        var filesCount, offset, fileData, fileType;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    filesCount = word_1.getWord(track0, exports.TOTAL_FILES_OFFSET);
-                    offset = exports.CATALOG_BEGIN_OFFSET;
-                    _a.label = 1;
-                case 1:
-                    if (!filesCount) return [3 /*break*/, 3];
-                    fileData = track0.subarray(offset, offset + exports.FILE_RECORD_LENGTH);
-                    fileType = fileData[0];
-                    if (FILE_TYPES_IGNORE_FOR_COUNT.indexOf(fileType) === -1) {
-                        filesCount--;
-                    }
-                    return [4 /*yield*/, { offset: offset, fileData: fileData }];
-                case 2:
-                    _a.sent();
-                    offset += exports.FILE_RECORD_LENGTH;
-                    return [3 /*break*/, 1];
-                case 3: return [2 /*return*/];
-            }
-        });
-    };
-    return MKDOS;
-}(FileSystem_1.default));
-exports.default = MKDOS;
-
-
-/***/ }),
 /* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var FILE_TYPES;
-(function (FILE_TYPES) {
-    FILE_TYPES["FILE"] = "FILE";
-    FILE_TYPES["DIR"] = "DIR";
-    FILE_TYPES["LINK"] = "LINK";
-    FILE_TYPES["LOGIC"] = "LOGIC";
-    FILE_TYPES["BAD"] = "BAD";
-    FILE_TYPES["DELETED"] = "DELETED";
-})(FILE_TYPES = exports.FILE_TYPES || (exports.FILE_TYPES = {}));
-var FileSystem = /** @class */ (function () {
-    function FileSystem(_disk) {
-        this._disk = _disk;
-    }
-    FileSystem.prototype.test = function () {
-        return this.osType;
-    };
-    FileSystem.prototype.getData = function () {
-        return this._disk.getData();
-    };
-    return FileSystem;
-}());
-exports.default = FileSystem;
-
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var Binary_1 = __importDefault(__webpack_require__(15));
-exports.BLOCK_SIZE = 512;
-var Disk = /** @class */ (function () {
-    function Disk(input) {
-        this._binary = new Binary_1.default(typeof input === 'number' ? input * exports.BLOCK_SIZE : input);
-    }
-    Disk.prototype.read = function (blockIndex, blocksCount) {
-        if (blocksCount === void 0) { blocksCount = 1; }
-        return this._binary.sliceUint8Array(blockIndex * exports.BLOCK_SIZE, (blockIndex + blocksCount) * exports.BLOCK_SIZE);
-    };
-    Disk.prototype.write = function (blockIndex, data) {
-        var binary = this._binary;
-        var length = data.length;
-        var blocksCount = Math.ceil(length / exports.BLOCK_SIZE);
-        var needLength = (blockIndex + blocksCount) * exports.BLOCK_SIZE;
-        // Если бинарные данные меньше нужного
-        if (binary.length < needLength) {
-            // TODO Сделать в Binary метод увеличения размера
-            binary.pushArray(new Uint8Array(needLength - binary.length));
-        }
-        binary.setArray(blockIndex * exports.BLOCK_SIZE, data);
-        // Добиваем последний блок нулями, если нужно
-        var lengthMod = length % exports.BLOCK_SIZE;
-        if (lengthMod) {
-            var zeroPadSize = exports.BLOCK_SIZE - lengthMod;
-            binary.setArray(blockIndex * exports.BLOCK_SIZE + length, new Uint8Array(zeroPadSize));
-        }
-        return this;
-    };
-    Disk.prototype.getData = function () {
-        return this._binary.getUint8Array();
-    };
-    return Disk;
-}());
-exports.default = Disk;
-
-
-/***/ }),
-/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2783,7 +2480,70 @@ exports.default = Binary;
 
 
 /***/ }),
-/* 16 */
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * Читаем выбранный файл в виде DataURL
+ */
+function readFileAsDataURL(file) {
+    return new Promise(function (resolve) {
+        var reader = new FileReader();
+        reader.onload = function () {
+            resolve(reader.result);
+        };
+        reader.readAsDataURL(file);
+    });
+}
+exports.readFileAsDataURL = readFileAsDataURL;
+/**
+ * Читаем выбранный файл в виде DataURL
+ */
+function readFileAsArrayBuffer(file) {
+    return new Promise(function (resolve) {
+        var reader = new FileReader();
+        reader.onload = function () {
+            resolve(reader.result);
+        };
+        reader.readAsArrayBuffer(file);
+    });
+}
+exports.readFileAsArrayBuffer = readFileAsArrayBuffer;
+/**
+ * Побеждаем глюк файловой системы macos с буквами Й и Ё
+ */
+function correctFileName(fileName) {
+    return fileName
+        .replace(/И\u0306/g, 'Й')
+        .replace(/и\u0306/g, 'й')
+        .replace(/Е\u0308/g, 'Ё')
+        .replace(/е\u0308/g, 'ё');
+}
+exports.correctFileName = correctFileName;
+function saveToFile(name, dataArray) {
+    var blob = new Blob([dataArray], { type: 'application/octet-stream' });
+    if (window.navigator && window.navigator.msSaveOrOpenBlob) { // for IE
+        window.navigator.msSaveOrOpenBlob(blob, name);
+    }
+    else {
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = name;
+        document.body.appendChild(a);
+        a.click();
+        URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+    }
+}
+exports.saveToFile = saveToFile;
+
+
+/***/ }),
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2853,103 +2613,8 @@ exports.getLatUpperCaseString = getLatUpperCaseString;
 
 
 /***/ }),
+/* 16 */,
 /* 17 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-__webpack_require__(18);
-var minimist_1 = __importDefault(__webpack_require__(19));
-var path_1 = __importDefault(__webpack_require__(0));
-var fs_1 = __importDefault(__webpack_require__(1));
-var glob_1 = __webpack_require__(6);
-var fileLib_1 = __webpack_require__(29);
-var filesToDisk_1 = __importDefault(__webpack_require__(30));
-var args = minimist_1.default(process.argv.slice(2), {
-    alias: { 'out': 'o' }
-});
-var inputFiles = args._;
-if (!inputFiles.length) {
-    exitWithError('Использование:\nbk-utils-bkd [--out diskName.bkd] file1.bin [file2.bin ...]');
-}
-var fileNames = getAllFiles(inputFiles);
-if (!fileNames.length) {
-    exitWithError('Не заданы подходящие для упаковки файлы');
-}
-var files = fileNames.reduce(function (acc, fileName) {
-    try {
-        var data = fs_1.default.readFileSync(fileName);
-        var name_1 = fileLib_1.correctFileName(path_1.default.basename(fileName)).replace(/\.bin$/i, '');
-        acc.push({ name: name_1, data: data });
-    }
-    catch (e) {
-        console.error('Не удалось считать файл: ' + fileName);
-    }
-    return acc;
-}, []);
-if (!files.length) {
-    exitWithError('Нет файлов для упаковки в образ диска');
-}
-var result = filesToDisk_1.default(files);
-result.files.forEach(function (file) {
-    console.log(file.name + ' - ' + (file.error ? file.error : 'OK'));
-});
-if (!result.disk) {
-    exitWithError('Не удалось создать образ диска');
-}
-var outName = args.out || result.files.filter(function (file) { return !file.error; })[0].name + '.bkd';
-var buffer;
-try {
-    buffer = Buffer.from(result.disk);
-}
-catch (e) {
-    buffer = new Buffer(result.disk); // Для старых Node.js
-}
-try {
-    fs_1.default.writeFileSync(outName, buffer);
-    console.log('Образ диска записан в файл ' + outName);
-}
-catch (e) {
-    exitWithError('Не удалось записать образ диска в файл ' + outName);
-}
-function exitWithError(error) {
-    console.error(error);
-    process.exit(1);
-}
-function getAllFiles(inputList) {
-    var files = inputList.reduce(function (acc, pattern) {
-        return acc.concat(glob_1.sync(pattern, { nodir: true }));
-    }, []);
-    return __spread(new Set(files)); // Уникальные файлы, на всякий случай.
-}
-
-
-/***/ }),
-/* 18 */
 /***/ (function(module, exports) {
 
 /**
@@ -2965,7 +2630,7 @@ if (!Object.entries) {
     };
 }
 /**
- * String.prototype.padStart() polyfill
+ * String.prototype.padEnd() polyfill
  * https://github.com/uxitten/polyfill/blob/master/string.polyfill.js
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/padEnd
  */
@@ -2988,7 +2653,7 @@ if (!String.prototype.padEnd) {
 
 
 /***/ }),
-/* 19 */
+/* 18 */
 /***/ (function(module, exports) {
 
 module.exports = function (args, opts) {
@@ -3236,6 +2901,75 @@ function isNumber (x) {
     return /^[-+]?(?:\d+(?:\.\d*)?|\.\d+)(e[-+]?\d+)?$/.test(x);
 }
 
+
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spread = (this && this.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
+    return ar;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var glob_1 = __webpack_require__(7);
+var fs_1 = __importDefault(__webpack_require__(1));
+var path_1 = __importDefault(__webpack_require__(0));
+var fileLib_1 = __webpack_require__(14);
+function getAllFiles(inputList) {
+    var files = inputList.reduce(function (acc, pattern) {
+        return acc.concat(glob_1.sync(pattern, { nodir: true }));
+    }, []);
+    return __spread(new Set(files)); // Уникальные файлы, на всякий случай.
+}
+exports.getAllFiles = getAllFiles;
+function readFiles(fileNames) {
+    var files = fileNames.reduce(function (acc, fileName) {
+        try {
+            var data = fs_1.default.readFileSync(fileName);
+            var name_1 = fileLib_1.correctFileName(path_1.default.basename(fileName)).replace(/\.bin$/i, '');
+            acc.push({ name: name_1, data: data });
+        }
+        catch (e) {
+            console.error('Не удалось считать файл: ' + fileName);
+        }
+        return acc;
+    }, []);
+    return files;
+}
+exports.readFiles = readFiles;
+function writeFile(fileName, data) {
+    var buffer;
+    try {
+        buffer = Buffer.from(data);
+    }
+    catch (e) {
+        buffer = new Buffer(data); // Для старых Node.js
+    }
+    fs_1.default.writeFileSync(fileName, buffer);
+}
+exports.writeFile = writeFile;
 
 
 /***/ }),
@@ -3844,7 +3578,7 @@ function range(a, b, str) {
 /***/ (function(module, exports, __webpack_require__) {
 
 try {
-  var util = __webpack_require__(4);
+  var util = __webpack_require__(3);
   /* istanbul ignore next */
   if (typeof util.inherits !== 'function') throw '';
   module.exports = util.inherits;
@@ -3901,15 +3635,15 @@ module.exports = globSync
 globSync.GlobSync = GlobSync
 
 var fs = __webpack_require__(1)
-var rp = __webpack_require__(7)
-var minimatch = __webpack_require__(3)
+var rp = __webpack_require__(8)
+var minimatch = __webpack_require__(2)
 var Minimatch = minimatch.Minimatch
-var Glob = __webpack_require__(6).Glob
-var util = __webpack_require__(4)
+var Glob = __webpack_require__(7).Glob
+var util = __webpack_require__(3)
 var path = __webpack_require__(0)
-var assert = __webpack_require__(8)
-var isAbsolute = __webpack_require__(5)
-var common = __webpack_require__(9)
+var assert = __webpack_require__(9)
+var isAbsolute = __webpack_require__(4)
+var common = __webpack_require__(10)
 var alphasort = common.alphasort
 var alphasorti = common.alphasorti
 var setopts = common.setopts
@@ -4389,9 +4123,9 @@ GlobSync.prototype._makeAbs = function (f) {
 /* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var wrappy = __webpack_require__(10)
+var wrappy = __webpack_require__(11)
 var reqs = Object.create(null)
-var once = __webpack_require__(11)
+var once = __webpack_require__(12)
 
 module.exports = wrappy(inflight)
 
@@ -4451,65 +4185,472 @@ function slice (args) {
 
 "use strict";
 
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * Читаем выбранный файл в виде DataURL
- */
-function readFileAsDataURL(file) {
-    return new Promise(function (resolve) {
-        var reader = new FileReader();
-        reader.onload = function () {
-            resolve(reader.result);
-        };
-        reader.readAsDataURL(file);
-    });
-}
-exports.readFileAsDataURL = readFileAsDataURL;
-/**
- * Читаем выбранный файл в виде DataURL
- */
-function readFileAsArrayBuffer(file) {
-    return new Promise(function (resolve) {
-        var reader = new FileReader();
-        reader.onload = function () {
-            resolve(reader.result);
-        };
-        reader.readAsArrayBuffer(file);
-    });
-}
-exports.readFileAsArrayBuffer = readFileAsArrayBuffer;
-/**
- * Побеждаем глюк файловой системы macos с буквами Й и Ё
- */
-function correctFileName(fileName) {
-    return fileName
-        .replace(/И\u0306/g, 'Й')
-        .replace(/и\u0306/g, 'й')
-        .replace(/Е\u0308/g, 'Ё')
-        .replace(/е\u0308/g, 'ё');
-}
-exports.correctFileName = correctFileName;
-function saveToFile(name, dataArray) {
-    var blob = new Blob([dataArray], { type: 'application/octet-stream' });
-    if (window.navigator && window.navigator.msSaveOrOpenBlob) { // for IE
-        window.navigator.msSaveOrOpenBlob(blob, name);
+var BKBinary_1 = __importDefault(__webpack_require__(6));
+function filedataToBinary(data) {
+    var binary = new BKBinary_1.default(data);
+    var error;
+    var address;
+    if (binary.length < 6) {
+        error = 'Слишком короткий bin-файл';
     }
     else {
-        var url = URL.createObjectURL(blob);
-        var a = document.createElement('a');
-        a.href = url;
-        a.download = name;
-        document.body.appendChild(a);
-        a.click();
-        URL.revokeObjectURL(url);
-        document.body.removeChild(a);
+        address = binary.getWord(0);
+        var size = binary.getWord(2);
+        if (size !== binary.length - 4) {
+            error = 'Файл не соответствует формату БК';
+        }
     }
+    return { binary: binary, error: error, address: address };
 }
-exports.saveToFile = saveToFile;
+exports.default = filedataToBinary;
 
 
 /***/ }),
 /* 30 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spread = (this && this.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
+    return ar;
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var FileSystem_1 = __importStar(__webpack_require__(31));
+var Disk_1 = __webpack_require__(32);
+var types_1 = __webpack_require__(36);
+var word_1 = __webpack_require__(5);
+var KOI8_1 = __webpack_require__(15);
+var MKDOSFile_1 = __importDefault(__webpack_require__(37));
+exports.BLOCKS_COUNT = 1600;
+exports.CATALOG_BLOCKS_COUNT = 20;
+exports.CATALOG_BEGIN_OFFSET = 320;
+exports.TOTAL_FILES_OFFSET = 24;
+exports.TOTAL_BLOCKS_OFFSET = 26;
+exports.LABEL_MICRODOS_OFFSET = 256;
+exports.LABEL_MICRODOS_VALUE = 42798;
+exports.LABEL_MKDOS_OFFSET = 258;
+exports.LABEL_MKDOS_VALUE = 21260;
+exports.BLOCKS_COUNT_OFFSET = 310;
+exports.FIRST_FILE_BLOCK_OFFSET = 312;
+exports.FILE_RECORD_LENGTH = 24;
+exports.FILE_STATUS_BYTE = 0;
+exports.FILE_DIR_ID_BYTE = 0;
+exports.FILE_PARENT_ID_BYTE = 1;
+exports.FILE_NAME_BEGIN = 2;
+exports.FILE_NAME_LENGTH = 14;
+exports.FILE_IS_DIR_MARKER = 127;
+exports.FILE_BLOCK_BEGIN_WORD = 16;
+exports.FILE_BLOCKS_COUNT_WORD = 18;
+exports.FILE_ADDRESS_WORD = 20;
+exports.FILE_LINK_DRIVE_BYTE = exports.FILE_ADDRESS_WORD;
+exports.FILE_SIZE_WORD = 22;
+exports.FILE_STATUS_NORMAL = 0;
+exports.FILE_STATUS_PROTECTED = 1;
+exports.FILE_STATUS_LOGIC_DISK = 2;
+exports.FILE_STATUS_BAD = 128;
+exports.FILE_STATUS_DELETED = 255;
+var FILE_TYPES_IGNORE_FOR_COUNT = [exports.FILE_STATUS_BAD, exports.FILE_STATUS_DELETED];
+var MKDOS = /** @class */ (function (_super) {
+    __extends(MKDOS, _super);
+    function MKDOS(disk) {
+        var _this = _super.call(this, disk) || this;
+        _this.fsType = types_1.FS_TYPES.MicroDOS;
+        _this.osType = types_1.OS_TYPES.MKDOS;
+        _this._filesList = [];
+        _this._filesByNameLatUC = {};
+        _this._dirs = {};
+        _this._dirFiles = {};
+        _this._blocks = new Array(exports.BLOCKS_COUNT).fill(undefined);
+        _this._initFilesList();
+        return _this;
+    }
+    MKDOS.prototype.fileExists = function (name, isDir) {
+        if (isDir === void 0) { isDir = false; }
+        var nameLatUC = this._fileNameToLatUC(name, isDir);
+        return nameLatUC in this._filesByNameLatUC;
+    };
+    MKDOS.prototype.getFileByName = function (name, isDir) {
+        if (isDir === void 0) { isDir = false; }
+        var nameLatUC = this._fileNameToLatUC(name, isDir);
+        return this._filesByNameLatUC[nameLatUC];
+    };
+    MKDOS.prototype.getFilesByDir = function (dir) {
+        var dirId = dir ? dir.dirId : 0;
+        return __spread(this._dirFiles[dirId]);
+    };
+    MKDOS.prototype.getFileContent = function (file) {
+        switch (file.type) {
+            case FileSystem_1.FILE_TYPES.FILE:
+                var blocksContent = this._disk.read(file.blockBegin, file.blocksCount);
+                return blocksContent.subarray(0, file.size);
+            case FileSystem_1.FILE_TYPES.DIR:
+                return this.getFilesByDir(file);
+        }
+    };
+    MKDOS.prototype.getFilesList = function () {
+        return __spread(this._filesList);
+    };
+    MKDOS.prototype.saveFile = function (file) {
+        if (!file.name) {
+            throw new Error('Пустое имя файла');
+        }
+        file.name = file.name.substr(0, exports.FILE_NAME_LENGTH).trim();
+        if (this.fileExists(file.name)) {
+            throw new Error('Файл с таким именем уже существует');
+        }
+        var fileSize = file.content.length;
+        var blocksCount = Math.ceil(fileSize / Disk_1.BLOCK_SIZE);
+        var blockBegin = this._findRoomForFile(blocksCount);
+        if (!blockBegin) {
+            throw new Error('Недостаточно места на диске');
+        }
+        var filesCount = this._filesList.length;
+        var offset = filesCount ? this._filesList[filesCount - 1].fsOffset + exports.FILE_RECORD_LENGTH : exports.CATALOG_BEGIN_OFFSET;
+        // TODO Добавить проверку, есть ли место в каталоге
+        var fileData = new Uint8Array(exports.FILE_RECORD_LENGTH);
+        fileData[exports.FILE_STATUS_BYTE] = file.isProtected ? exports.FILE_STATUS_PROTECTED : exports.FILE_STATUS_NORMAL;
+        fileData[exports.FILE_PARENT_ID_BYTE] = file.parent ? file.parent.dirId : 0;
+        var fileNameBytes = KOI8_1.getKOI8Bytes(file.name.padEnd(exports.FILE_NAME_LENGTH));
+        fileData.set(fileNameBytes, exports.FILE_NAME_BEGIN);
+        word_1.setWord(fileData, exports.FILE_BLOCK_BEGIN_WORD, blockBegin);
+        word_1.setWord(fileData, exports.FILE_BLOCKS_COUNT_WORD, blocksCount);
+        word_1.setWord(fileData, exports.FILE_ADDRESS_WORD, file.address);
+        word_1.setWord(fileData, exports.FILE_SIZE_WORD, fileSize);
+        var track0 = this._track0;
+        track0.set(fileData, offset);
+        var totalFiles = word_1.getWord(track0, exports.TOTAL_FILES_OFFSET) + 1;
+        var totalBlocks = word_1.getWord(track0, exports.TOTAL_BLOCKS_OFFSET) + blocksCount;
+        word_1.setWord(track0, exports.TOTAL_FILES_OFFSET, totalFiles);
+        word_1.setWord(track0, exports.TOTAL_BLOCKS_OFFSET, totalBlocks);
+        this._disk
+            .write(0, track0)
+            .write(blockBegin, file.content);
+        return this._addFile({ offset: offset, fileData: fileData });
+    };
+    MKDOS.prototype.mkDir = function (dir) {
+        if (!dir.name) {
+            throw new Error('Пустое имя директории');
+        }
+        dir.name = dir.name.substr(0, exports.FILE_NAME_LENGTH - 1).trim();
+        if (this.fileExists(dir.name, true)) {
+            throw new Error('Директория с таким именем уже существует');
+        }
+        var filesCount = this._filesList.length;
+        var offset;
+        var blockBegin;
+        if (filesCount) {
+            var lastFile = this._filesList[filesCount - 1];
+            offset = lastFile.fsOffset + exports.FILE_RECORD_LENGTH;
+            blockBegin = lastFile.blockBegin + lastFile.blocksCount;
+        }
+        else {
+            offset = exports.CATALOG_BEGIN_OFFSET;
+            blockBegin = exports.CATALOG_BLOCKS_COUNT;
+        }
+        var dirIds = Object.keys(this._dirs);
+        var dirId = dirIds.length ? Math.max.apply(null, dirIds) + 1 : 1;
+        if (dirId > 255) {
+            throw new Error('Слишком много директорий');
+        }
+        // TODO Добавить проверку, есть ли место в каталоге
+        var fileData = new Uint8Array(exports.FILE_RECORD_LENGTH);
+        fileData[exports.FILE_DIR_ID_BYTE] = dirId;
+        fileData[exports.FILE_PARENT_ID_BYTE] = dir.parent ? dir.parent.dirId : 0;
+        var fileNameBytes = KOI8_1.getKOI8Bytes(dir.name.padEnd(exports.FILE_NAME_LENGTH - 1));
+        fileData[exports.FILE_NAME_BEGIN] = exports.FILE_IS_DIR_MARKER;
+        fileData.set(fileNameBytes, exports.FILE_NAME_BEGIN + 1);
+        word_1.setWord(fileData, exports.FILE_BLOCK_BEGIN_WORD, blockBegin);
+        var track0 = this._track0;
+        track0.set(fileData, offset);
+        var totalFiles = word_1.getWord(track0, exports.TOTAL_FILES_OFFSET) + 1;
+        word_1.setWord(track0, exports.TOTAL_FILES_OFFSET, totalFiles);
+        this._disk
+            .write(0, track0);
+        return this._addFile({ offset: offset, fileData: fileData });
+    };
+    MKDOS.prototype._findRoomForFile = function (needBlocksCount) {
+        for (var i = exports.CATALOG_BLOCKS_COUNT; i < exports.BLOCKS_COUNT; i++) {
+            if (this._blocks[i]) {
+                continue;
+            }
+            if (exports.BLOCKS_COUNT - i < needBlocksCount) {
+                // Уже точно нет места
+                return;
+            }
+            var blockBegin = i;
+            var blockEnd = blockBegin + needBlocksCount;
+            for (; i < blockEnd; i++) {
+                // Проверяем, есть ли непрерывное пространство
+                if (this._blocks[i]) {
+                    break;
+                }
+            }
+            if (i === blockEnd) {
+                // Нашли достаточно места
+                return blockBegin;
+            }
+        }
+    };
+    MKDOS.prototype._fileNameToLatUC = function (name, isDir) {
+        if (isDir === void 0) { isDir = false; }
+        return (isDir ? '_' : '') + KOI8_1.getLatUpperCaseString(KOI8_1.getKOI8Bytes(name));
+    };
+    MKDOS.prototype._initFilesList = function () {
+        this._track0 = this._disk.read(0, exports.CATALOG_BLOCKS_COUNT);
+        Array.from(this._generateFilesData(this._track0)).forEach(this._addFile.bind(this));
+    };
+    MKDOS.prototype._addFile = function (raw) {
+        var file = new MKDOSFile_1.default(this);
+        file.setFromRawData(raw);
+        this._filesList.push(file);
+        this._processFile(file);
+        return file;
+    };
+    MKDOS.prototype._processFile = function (file) {
+        if (file.type === FileSystem_1.FILE_TYPES.DIR) {
+            this._dirs[file.dirId] = file;
+        }
+        if (!this._dirFiles[file.parentId]) {
+            this._dirFiles[file.parentId] = [];
+        }
+        this._dirFiles[file.parentId].push(file);
+        if (file.nameLatUC) {
+            this._filesByNameLatUC[file.nameLatUC] = file;
+        }
+        if (file.blocksCount > 0) {
+            this._blocks.fill(file, file.blockBegin, file.blockBegin + file.blocksCount);
+        }
+    };
+    MKDOS.prototype._generateFilesData = function (track0) {
+        var filesCount, offset, fileData, fileType;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    filesCount = word_1.getWord(track0, exports.TOTAL_FILES_OFFSET);
+                    offset = exports.CATALOG_BEGIN_OFFSET;
+                    _a.label = 1;
+                case 1:
+                    if (!filesCount) return [3 /*break*/, 3];
+                    fileData = track0.subarray(offset, offset + exports.FILE_RECORD_LENGTH);
+                    fileType = fileData[0];
+                    if (FILE_TYPES_IGNORE_FOR_COUNT.indexOf(fileType) === -1) {
+                        filesCount--;
+                    }
+                    return [4 /*yield*/, { offset: offset, fileData: fileData }];
+                case 2:
+                    _a.sent();
+                    offset += exports.FILE_RECORD_LENGTH;
+                    return [3 /*break*/, 1];
+                case 3: return [2 /*return*/];
+            }
+        });
+    };
+    return MKDOS;
+}(FileSystem_1.default));
+exports.default = MKDOS;
+
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var FILE_TYPES;
+(function (FILE_TYPES) {
+    FILE_TYPES["FILE"] = "FILE";
+    FILE_TYPES["DIR"] = "DIR";
+    FILE_TYPES["LINK"] = "LINK";
+    FILE_TYPES["LOGIC"] = "LOGIC";
+    FILE_TYPES["BAD"] = "BAD";
+    FILE_TYPES["DELETED"] = "DELETED";
+})(FILE_TYPES = exports.FILE_TYPES || (exports.FILE_TYPES = {}));
+var FileSystem = /** @class */ (function () {
+    function FileSystem(_disk) {
+        this._disk = _disk;
+    }
+    FileSystem.prototype.test = function () {
+        return this.osType;
+    };
+    FileSystem.prototype.getData = function () {
+        return this._disk.getData();
+    };
+    return FileSystem;
+}());
+exports.default = FileSystem;
+
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var Binary_1 = __importDefault(__webpack_require__(13));
+exports.BLOCK_SIZE = 512;
+var Disk = /** @class */ (function () {
+    function Disk(input) {
+        this._binary = new Binary_1.default(typeof input === 'number' ? input * exports.BLOCK_SIZE : input);
+    }
+    Disk.prototype.read = function (blockIndex, blocksCount) {
+        if (blocksCount === void 0) { blocksCount = 1; }
+        return this._binary.sliceUint8Array(blockIndex * exports.BLOCK_SIZE, (blockIndex + blocksCount) * exports.BLOCK_SIZE);
+    };
+    Disk.prototype.write = function (blockIndex, data) {
+        var binary = this._binary;
+        var length = data.length;
+        var blocksCount = Math.ceil(length / exports.BLOCK_SIZE);
+        var needLength = (blockIndex + blocksCount) * exports.BLOCK_SIZE;
+        // Если бинарные данные меньше нужного
+        if (binary.length < needLength) {
+            // TODO Сделать в Binary метод увеличения размера
+            binary.pushArray(new Uint8Array(needLength - binary.length));
+        }
+        binary.setArray(blockIndex * exports.BLOCK_SIZE, data);
+        // Добиваем последний блок нулями, если нужно
+        var lengthMod = length % exports.BLOCK_SIZE;
+        if (lengthMod) {
+            var zeroPadSize = exports.BLOCK_SIZE - lengthMod;
+            binary.setArray(blockIndex * exports.BLOCK_SIZE + length, new Uint8Array(zeroPadSize));
+        }
+        return this;
+    };
+    Disk.prototype.getData = function () {
+        return this._binary.getUint8Array();
+    };
+    return Disk;
+}());
+exports.default = Disk;
+
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+__webpack_require__(17);
+var minimist_1 = __importDefault(__webpack_require__(18));
+var ioLib_1 = __webpack_require__(19);
+var filesToDisk_1 = __importDefault(__webpack_require__(34));
+var args = minimist_1.default(process.argv.slice(2), {
+    alias: { 'out': 'o' }
+});
+var inputFiles = args._;
+if (!inputFiles.length) {
+    exitWithError('Использование:\nbk-utils-bkd [--out diskName.bkd] file1.bin [file2.bin ...]');
+}
+var fileNames = ioLib_1.getAllFiles(inputFiles);
+if (!fileNames.length) {
+    exitWithError('Не заданы подходящие для упаковки файлы');
+}
+var files = ioLib_1.readFiles(fileNames);
+if (!files.length) {
+    exitWithError('Нет файлов для упаковки в образ диска');
+}
+var result = filesToDisk_1.default(files);
+result.files.forEach(function (file) {
+    console.log(file.name + ' - ' + (file.error ? file.error : 'OK'));
+});
+if (!result.disk) {
+    exitWithError('Не удалось создать образ диска');
+}
+var outName = args.out || result.files.filter(function (file) { return !file.error; })[0].name + '.bkd';
+try {
+    ioLib_1.writeFile(outName, result.disk);
+    console.log('Образ диска записан в файл ' + outName);
+}
+catch (e) {
+    exitWithError('Не удалось записать образ диска в файл ' + outName);
+}
+function exitWithError(error) {
+    console.error(error);
+    process.exit(1);
+}
+
+
+/***/ }),
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4529,8 +4670,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var createDisk_1 = __importDefault(__webpack_require__(31));
-var filedataToBinary_1 = __importDefault(__webpack_require__(36));
+var createDisk_1 = __importDefault(__webpack_require__(35));
+var filedataToBinary_1 = __importDefault(__webpack_require__(29));
 function filesToDisk(files) {
     var e_1, _a;
     var fileSystem = createDisk_1.default();
@@ -4576,7 +4717,7 @@ exports.default = filesToDisk;
 
 
 /***/ }),
-/* 31 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4600,11 +4741,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var MKDOS_1 = __importStar(__webpack_require__(12));
-var Disk_1 = __importStar(__webpack_require__(14));
-var base64_arraybuffer_1 = __webpack_require__(34);
-var word_1 = __webpack_require__(2);
-var diskDump_1 = __webpack_require__(35);
+var MKDOS_1 = __importStar(__webpack_require__(30));
+var Disk_1 = __importStar(__webpack_require__(32));
+var base64_arraybuffer_1 = __webpack_require__(38);
+var word_1 = __webpack_require__(5);
+var diskDump_1 = __webpack_require__(39);
 function createDisk() {
     var fileSystem = initMKDOSDisk(true);
     saveFilesDump(fileSystem, diskDump_1.diskDump);
@@ -4664,7 +4805,7 @@ exports.saveFilesDump = saveFilesDump;
 
 
 /***/ }),
-/* 32 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4681,17 +4822,17 @@ var FS_TYPES;
 
 
 /***/ }),
-/* 33 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
-var FileSystem_1 = __webpack_require__(13);
-var word_1 = __webpack_require__(2);
-var KOI8_1 = __webpack_require__(16);
-var MKDOS_1 = __webpack_require__(12);
+var FileSystem_1 = __webpack_require__(31);
+var word_1 = __webpack_require__(5);
+var KOI8_1 = __webpack_require__(15);
+var MKDOS_1 = __webpack_require__(30);
 var STATUS_TO_TYPE = (_a = {},
     _a[MKDOS_1.FILE_STATUS_LOGIC_DISK] = FileSystem_1.FILE_TYPES.LOGIC,
     _a[MKDOS_1.FILE_STATUS_BAD] = FileSystem_1.FILE_TYPES.BAD,
@@ -4827,7 +4968,7 @@ exports.default = MKDOSFile;
 
 
 /***/ }),
-/* 34 */
+/* 38 */
 /***/ (function(module, exports) {
 
 /*
@@ -4900,7 +5041,7 @@ exports.default = MKDOSFile;
 
 
 /***/ }),
-/* 35 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5018,123 +5159,6 @@ exports.diskDump = [{
                 'isProtected': true
             }]
     }];
-
-
-/***/ }),
-/* 36 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var BKBinary_1 = __importDefault(__webpack_require__(37));
-function filedataToBinary(data) {
-    var binary = new BKBinary_1.default(data);
-    var error;
-    var address;
-    if (binary.length < 6) {
-        error = 'Слишком короткий bin-файл';
-    }
-    else {
-        address = binary.getWord(0);
-        var size = binary.getWord(2);
-        if (size !== binary.length - 4) {
-            error = 'Файл не соответствует формату БК';
-        }
-    }
-    return { binary: binary, error: error, address: address };
-}
-exports.default = filedataToBinary;
-
-
-/***/ }),
-/* 37 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var Binary_1 = __importDefault(__webpack_require__(15));
-var word_1 = __webpack_require__(2);
-/**
- * Класс БКшных бинарников
- */
-var BKBinary = /** @class */ (function (_super) {
-    __extends(BKBinary, _super);
-    function BKBinary() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    BKBinary.prototype.pushWord = function (word) {
-        return this.pushArray([word & 0xff, (word >> 8) & 0xff]);
-    };
-    BKBinary.prototype.insertWord = function (index, word) {
-        this.insertArray(index, [0, 0]);
-        return this.setWord(index, word);
-    };
-    BKBinary.prototype.getWord = function (index) {
-        return word_1.getWord(this._data, index);
-    };
-    BKBinary.prototype.setWord = function (index, word) {
-        word_1.setWord(this._data, index, word);
-        return this;
-    };
-    BKBinary.prototype.getCheckSum = function (offset) {
-        if (offset === void 0) { offset = 0; }
-        var checkSum = 0;
-        var data = this._data;
-        var length = this._length;
-        for (var i = offset; i < length; i++) {
-            checkSum += data[i];
-            if (checkSum > 65535) { // переполнение
-                checkSum -= 65536;
-                checkSum++;
-            }
-        }
-        return checkSum;
-    };
-    BKBinary.prototype.setBit = function (index, bitPosition, bitValue) {
-        if (bitValue === void 0) { bitValue = 1; }
-        return this._setBits(index, bitValue, bitPosition, 1);
-    };
-    BKBinary.prototype.setBitsPair = function (index, bitsPosition, bitsValue) {
-        if (bitsValue === void 0) { bitsValue = 3; }
-        return this._setBits(index, bitsValue, bitsPosition * 2, 3);
-    };
-    BKBinary.prototype._setBits = function (index, bitsValue, bitsPosition, clearMask) {
-        var useWord = bitsPosition > 7;
-        var value = useWord ? this.getWord(index) : this.getByte(index);
-        value &= ~(clearMask << bitsPosition);
-        value |= (bitsValue << bitsPosition);
-        if (useWord) {
-            this.setWord(index, value);
-        }
-        else {
-            this.setByte(index, value);
-        }
-        return this;
-    };
-    return BKBinary;
-}(Binary_1.default));
-exports.default = BKBinary;
 
 
 /***/ })

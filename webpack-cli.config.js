@@ -5,7 +5,8 @@ const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 module.exports = {
   entry: {
-    'bk-utils-bkd': './src/bk-utils-bkd.ts'
+    'bk-utils-bkd': './src/bk-utils-bkd.ts',
+    'bk-utils-wav': './src/bk-utils-wav.ts'
   },
   module: {
     rules: [

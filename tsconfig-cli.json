@@ -3,7 +3,6 @@
   "compilerOptions": {
     "outDir": "./cli/",
     "sourceMap": false,
-    "module": "commonjs",
-    "target": "es5"
+    "module": "commonjs"
   }
 }

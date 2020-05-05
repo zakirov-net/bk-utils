@@ -3,6 +3,7 @@
     "outDir": "./dist/",
     "baseUrl": ".",
     "paths": {
+      "@cli/*": ["./src/cli/*"],
       "@common/*": ["./src/common/*"],
       "@bkd/*": ["./src/bkd/*"],
       "@image-to-asm/*": ["./src/image-to-asm/*"],
