@@ -1,11 +1,13 @@
-import filesToDisk, {IFile, IResult} from './bkd/filesToDisk';
-import {correctFileName, readFileAsArrayBuffer, saveToFile} from './common/fileLib';
+import filesToDisk, {IFile, IResult} from '@bkd/filesToDisk';
+import {correctFileName, readFileAsArrayBuffer, saveToFile} from '@common/fileLib';
 
 const fileInput = getInput('#file');
 const resultDiv = getElement('#resultFiles');
+const withBootLoaderInput = getInput('#withBootLoader');
 let result: IResult;
 
 fileInput.addEventListener('change', filesChanged);
+withBootLoaderInput.addEventListener('change', filesChanged);
 
 getElement('#saveButton').addEventListener('click', saveFile);
 
@@ -22,12 +24,12 @@ function filesChanged() {
         });
 
         Promise.all(filePromises).then(files => {
-            result = filesToDisk(files);
+            result = filesToDisk(files, withBootLoaderInput.checked);
             resultDiv.innerHTML = result.files.map(file => {
                 return '<div>' + file.name +
                     (file.error ? ` - <span class="error">${file.error}</span>` : '') +
                     '</div>';
-            }).join('');
+            }).join('') + '<br>';
         });
     }
 }

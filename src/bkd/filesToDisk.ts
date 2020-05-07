@@ -16,8 +16,8 @@ export interface IResult {
     files: IResultFile[];
 }
 
-export default function filesToDisk(files: IFile[]): IResult {
-    const fileSystem = createDisk();
+export default function filesToDisk(files: IFile[], withBootLoader: boolean = true): IResult {
+    const fileSystem = createDisk(withBootLoader);
     const resultFiles: IResultFile[] = [];
     for (const file of files) {
         const {binary: fileBinary, error} = filedataToBinary(file.data);

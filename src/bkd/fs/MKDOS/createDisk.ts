@@ -19,9 +19,11 @@ export interface IStructItem {
     isProtected?: boolean;
 }
 
-export default function createDisk(): MKDOS {
-    const fileSystem = initMKDOSDisk(true);
-    saveFilesDump(fileSystem, diskDump);
+export default function createDisk(withBootLoader: boolean = true): MKDOS {
+    const fileSystem = initMKDOSDisk(withBootLoader);
+    if (withBootLoader) {
+        saveFilesDump(fileSystem, diskDump);
+    }
     return fileSystem;
 }
 

@@ -2939,7 +2939,7 @@ var path_1 = __importDefault(__webpack_require__(0));
 var fileLib_1 = __webpack_require__(14);
 function getAllFiles(inputList) {
     var files = inputList.reduce(function (acc, pattern) {
-        return acc.concat(glob_1.sync(pattern, { nodir: true }));
+        return acc.concat(glob_1.sync(pattern, { nodir: true, nocase: true }));
     }, []);
     return __spread(new Set(files)); // Уникальные файлы, на всякий случай.
 }
@@ -4613,12 +4613,18 @@ __webpack_require__(17);
 var minimist_1 = __importDefault(__webpack_require__(18));
 var ioLib_1 = __webpack_require__(19);
 var filesToDisk_1 = __importDefault(__webpack_require__(34));
+var IMAGE_BASES;
+(function (IMAGE_BASES) {
+    IMAGE_BASES["empty"] = "empty";
+    IMAGE_BASES["bootable"] = "bootable";
+})(IMAGE_BASES || (IMAGE_BASES = {}));
 var args = minimist_1.default(process.argv.slice(2), {
-    alias: { 'out': 'o' }
+    alias: { disk: 'd', out: 'o' },
+    default: { disk: IMAGE_BASES.bootable }
 });
 var inputFiles = args._;
-if (!inputFiles.length) {
-    exitWithError('Использование:\nbk-utils-bkd [--out diskName.bkd] file1.bin [file2.bin ...]');
+if (!inputFiles.length || !(args.disk in IMAGE_BASES)) {
+    exitWithError('Использование:\nbk-utils-bkd [--disk empty|bootable] [--out diskName.bkd] file1.bin [file2.bin ...]');
 }
 var fileNames = ioLib_1.getAllFiles(inputFiles);
 if (!fileNames.length) {
@@ -4628,7 +4634,8 @@ var files = ioLib_1.readFiles(fileNames);
 if (!files.length) {
     exitWithError('Нет файлов для упаковки в образ диска');
 }
-var result = filesToDisk_1.default(files);
+var withBootLoader = args.disk === IMAGE_BASES.bootable;
+var result = filesToDisk_1.default(files, withBootLoader);
 result.files.forEach(function (file) {
     console.log(file.name + ' - ' + (file.error ? file.error : 'OK'));
 });
@@ -4672,9 +4679,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var createDisk_1 = __importDefault(__webpack_require__(35));
 var filedataToBinary_1 = __importDefault(__webpack_require__(29));
-function filesToDisk(files) {
+function filesToDisk(files, withBootLoader) {
     var e_1, _a;
-    var fileSystem = createDisk_1.default();
+    if (withBootLoader === void 0) { withBootLoader = true; }
+    var fileSystem = createDisk_1.default(withBootLoader);
     var resultFiles = [];
     try {
         for (var files_1 = __values(files), files_1_1 = files_1.next(); !files_1_1.done; files_1_1 = files_1.next()) {
@@ -4746,9 +4754,12 @@ var Disk_1 = __importStar(__webpack_require__(32));
 var base64_arraybuffer_1 = __webpack_require__(38);
 var word_1 = __webpack_require__(5);
 var diskDump_1 = __webpack_require__(39);
-function createDisk() {
-    var fileSystem = initMKDOSDisk(true);
-    saveFilesDump(fileSystem, diskDump_1.diskDump);
+function createDisk(withBootLoader) {
+    if (withBootLoader === void 0) { withBootLoader = true; }
+    var fileSystem = initMKDOSDisk(withBootLoader);
+    if (withBootLoader) {
+        saveFilesDump(fileSystem, diskDump_1.diskDump);
+    }
     return fileSystem;
 }
 exports.default = createDisk;

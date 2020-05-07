@@ -6,7 +6,7 @@ import {IFile} from '@bkd/filesToDisk';
 
 export function getAllFiles(inputList: string[]): string[] {
     const files: string[] = inputList.reduce((acc, pattern) => {
-        return acc.concat(globSync(pattern, {nodir: true}));
+        return acc.concat(globSync(pattern, {nodir: true, nocase: true}));
     }, []);
     return [...new Set(files)]; // Уникальные файлы, на всякий случай.
 }

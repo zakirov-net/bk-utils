@@ -3112,7 +3112,7 @@ var path_1 = __importDefault(__webpack_require__(0));
 var fileLib_1 = __webpack_require__(14);
 function getAllFiles(inputList) {
     var files = inputList.reduce(function (acc, pattern) {
-        return acc.concat(glob_1.sync(pattern, { nodir: true }));
+        return acc.concat(glob_1.sync(pattern, { nodir: true, nocase: true }));
     }, []);
     return __spread(new Set(files)); // Уникальные файлы, на всякий случай.
 }
